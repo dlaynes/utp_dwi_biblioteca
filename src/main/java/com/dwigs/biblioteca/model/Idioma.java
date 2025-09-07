@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Idioma implements TieneHistorial {
+public class Idioma implements HasId {
 
     public static Idioma[] idiomas = {
             new Idioma(1, LocalDateTime.now(), "Español", "ES"),

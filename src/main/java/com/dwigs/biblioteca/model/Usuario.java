@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Usuario implements TieneHistorial {
+public class Usuario {
     private long id;
 
     private String email;

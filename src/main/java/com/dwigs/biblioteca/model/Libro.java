@@ -11,7 +11,7 @@ import com.dwigs.biblioteca.model.converter.GeneroLiterarioAttributeConverter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Libro implements TieneHistorial {
+public class Libro implements HasId {
     private long id;
 
     private LocalDateTime fechaRegistro;

@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-public class InventarioLibro implements TieneHistorial {
+public class InventarioLibro {
     private long id;
 
     private LocalDateTime fechaRegistro;

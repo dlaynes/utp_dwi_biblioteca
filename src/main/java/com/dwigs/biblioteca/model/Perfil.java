@@ -12,7 +12,7 @@ import com.dwigs.biblioteca.model.converter.EstadoCivilAttributeConverter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Perfil implements TieneHistorial {
+public class Perfil {
     private long id;
 
     private long usuario_id;

@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Local implements TieneHistorial {
+public class Local {
     private long id;
 
     private LocalDateTime fechaRegistro;

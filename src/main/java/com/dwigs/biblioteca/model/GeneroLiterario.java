@@ -5,16 +5,6 @@ import java.time.LocalDateTime;
 
 public enum GeneroLiterario {
 
-    /*
-    public static GeneroLiterario[] generosLiterarios = {
-            new GeneroLiterario(1, LocalDateTime.now(), "Narrativo"),
-            new GeneroLiterario(2, LocalDateTime.now(), "Poesía"),
-            new GeneroLiterario(3, LocalDateTime.now(), "Dramático"),
-            new GeneroLiterario(4, LocalDateTime.now(), "Didáctico"),
-            new GeneroLiterario(5, LocalDateTime.now(), "Lírico"),
-    };
-    */
-
     narrativo,
     poesia,
     dramatico,

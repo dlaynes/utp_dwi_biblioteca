@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Prestamo implements TieneHistorial {
+public class Prestamo {
 
     private long id;
 
@@ -28,6 +28,12 @@ public class Prestamo implements TieneHistorial {
 
     // Persona que solicita el libro
     private Usuario cliente;
+
+    // Persona que entrega el libro
+    private Usuario entregadoPor;
+
+    // Persona que recupera el libro
+    private Usuario recepcionadoPor;
 
     private LocalDateTime fechaReserva;
 
