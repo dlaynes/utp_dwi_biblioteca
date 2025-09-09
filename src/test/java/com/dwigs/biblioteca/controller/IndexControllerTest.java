@@ -30,14 +30,12 @@ public class IndexControllerTest {
 
     @Test
     public void testSumar() throws Exception {
-        /*
         URI uri = new URI("/sumar?op1=2&op2=3");
         MockHttpServletRequestBuilder req =
                 MockMvcRequestBuilders.get(uri).accept(MediaType.APPLICATION_JSON);
         MvcResult result = mockMvc.perform(req).andReturn();
         assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
         assertEquals("5", result.getResponse().getContentAsString());
-        */
 
         assertTrue("En progreso", true);
 
