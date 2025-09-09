@@ -2,14 +2,14 @@ package com.dwigs.biblioteca.service;
 
 import com.dwigs.biblioteca.model.Editorial;
 import com.dwigs.biblioteca.repository.EditorialRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class EditorialService extends InMemoryService<Editorial> {
 
-    @Autowired
-    EditorialRepository repository;
+    public EditorialService(){
+        this.repository = new EditorialRepository();
+    }
 
     @Override
     public void validarCreacion(Editorial obj) {

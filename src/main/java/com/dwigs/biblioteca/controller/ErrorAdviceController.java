@@ -16,6 +16,7 @@ public class ErrorAdviceController {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> manejarExcepcionGeneral(Exception ex) {
+        System.out.println(ex.getMessage());
         return new ResponseEntity<>("Ocurrió un error inesperado", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

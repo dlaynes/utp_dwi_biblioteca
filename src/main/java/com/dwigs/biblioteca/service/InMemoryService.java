@@ -2,6 +2,7 @@ package com.dwigs.biblioteca.service;
 
 import com.dwigs.biblioteca.model.HasId;
 import com.dwigs.biblioteca.model.Libro;
+import com.dwigs.biblioteca.repository.IRepository;
 import com.dwigs.biblioteca.repository.InMemoryRepository;
 
 import java.util.List;

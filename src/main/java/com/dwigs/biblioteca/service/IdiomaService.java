@@ -2,14 +2,14 @@ package com.dwigs.biblioteca.service;
 
 import com.dwigs.biblioteca.model.Idioma;
 import com.dwigs.biblioteca.repository.IdiomaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class IdiomaService extends InMemoryService<Idioma> {
 
-    @Autowired
-    IdiomaRepository repository;
+    public IdiomaService(){
+        this.repository = new IdiomaRepository();
+    }
 
     @Override
     public void validarCreacion(Idioma obj) {

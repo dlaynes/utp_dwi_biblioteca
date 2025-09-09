@@ -40,6 +40,7 @@ public class CrearLibroDTO {
         libro.setNacionalidad(this.getNacionalidad());
         libro.setPublicadoEn(this.getPublicadoEn());
         libro.setPaginas(this.getPaginas());
+        libro.setGeneroLiterario(this.getGeneroLiterario());
         return libro;
     }
 }

@@ -2,14 +2,14 @@ package com.dwigs.biblioteca.service;
 
 import com.dwigs.biblioteca.model.Autor;
 import com.dwigs.biblioteca.repository.AutorRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AutorService extends InMemoryService<Autor> {
 
-    @Autowired
-    AutorRepository repository;
+    public AutorService(){
+        this.repository = new AutorRepository();
+    }
 
     @Override
     public void validarCreacion(Autor obj) {
