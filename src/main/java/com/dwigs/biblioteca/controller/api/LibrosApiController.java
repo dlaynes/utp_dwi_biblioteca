@@ -111,6 +111,7 @@ public class LibrosApiController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable long id){
+        inicializar();
         return libroService.eliminar(id) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 }
