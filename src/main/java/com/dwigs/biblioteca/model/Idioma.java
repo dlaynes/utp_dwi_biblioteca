@@ -1,36 +1,36 @@
 package com.dwigs.biblioteca.model;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @NoArgsConstructor
-public class Idioma implements HasId {
-
-    public static Idioma[] idiomas = {
-            new Idioma(1, LocalDateTime.now(), "Español", "ES"),
-            new Idioma(2, LocalDateTime.now(), "Inglés", "EN"),
-            new Idioma(3, LocalDateTime.now(), "Frances", "FR"),
-            new Idioma(4, LocalDateTime.now(), "Alemán", "DE"),
-            new Idioma(5, LocalDateTime.now(), "Japonés", "JP"),
-            new Idioma(6, LocalDateTime.now(), "Chino", "ZN"),
-            new Idioma(7, LocalDateTime.now(), "Portugues", "PT"),
-    };
-
+@Entity
+@Table(name = "idioma")
+public class Idioma {
+    @Id()
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="id", columnDefinition = "BIGINT")
     private long id;
 
+    @CreationTimestamp
+    @Column(name="fecha_registro")
+    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime fechaRegistro;
 
+    @Column(name="nombre", nullable = false, length = 50)
     private String nombre;
 
+    @Column(name="codigo", nullable = false, length = 10)
     private String codigo;
 
-    public Idioma(long id, LocalDateTime dateTime, String nombre, String codigo){
-        this.id = id;
+    public Idioma( LocalDateTime dateTime, String nombre, String codigo){
         this.fechaRegistro = dateTime;
         this.nombre = nombre;
         this.codigo = codigo;

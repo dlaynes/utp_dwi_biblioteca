@@ -1,27 +1,30 @@
 package com.dwigs.biblioteca.service;
 
 import com.dwigs.biblioteca.model.Editorial;
+import com.dwigs.biblioteca.model.Editorial;
+import com.dwigs.biblioteca.model.Libro;
 import com.dwigs.biblioteca.repository.EditorialRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
-public class EditorialService extends InMemoryService<Editorial> {
+public class EditorialService {
 
-    public EditorialService(){
-        this.repository = new EditorialRepository();
+    private final EditorialRepository repository;
+
+    @Autowired
+    public EditorialService(EditorialRepository repository){
+        this.repository = repository;
     }
 
-    @Override
-    public void validarCreacion(Editorial obj) {
-        if(obj.getNombre().isEmpty()){
-            throw new IllegalArgumentException("Debe indicar un nombre");
-        }
+    public List<Editorial> dameEditoriales(){
+        return repository.findAll();
     }
 
-    @Override
-    public void validarEdicion(Editorial obj) {
-        if(obj.getNombre().isEmpty()){
-            throw new IllegalArgumentException("Debe indicar un nombre");
-        }
-    }
+    public Long contarEditoriales() { return repository.count(); }
+
+    public Optional<Editorial> consultar(Long id) { return repository.findOneById(id); }
 }

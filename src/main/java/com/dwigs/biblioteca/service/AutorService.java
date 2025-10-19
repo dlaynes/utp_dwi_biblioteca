@@ -1,27 +1,29 @@
 package com.dwigs.biblioteca.service;
 
 import com.dwigs.biblioteca.model.Autor;
+import com.dwigs.biblioteca.model.Libro;
 import com.dwigs.biblioteca.repository.AutorRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
-public class AutorService extends InMemoryService<Autor> {
+public class AutorService {
 
-    public AutorService(){
-        this.repository = new AutorRepository();
+    private final AutorRepository repository;
+
+    @Autowired
+    public AutorService(AutorRepository repository){
+        this.repository = repository;
     }
 
-    @Override
-    public void validarCreacion(Autor obj) {
-        if(obj.getNombres().isEmpty()){
-            throw new IllegalArgumentException("Debe indicar un nombre");
-        }
+    public List<Autor> listar(){
+        return repository.findAll();
     }
 
-    @Override
-    public void validarEdicion(Autor obj) {
-        if(obj.getNombres().isEmpty()){
-            throw new IllegalArgumentException("Debe indicar un nombre");
-        }
-    }
+    public Long contarAutores() { return repository.count(); }
+
+    public Optional<Autor> consultar(Long id) { return repository.findOneById(id); }
 }

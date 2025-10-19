@@ -1,27 +1,28 @@
 package com.dwigs.biblioteca.service;
 
 import com.dwigs.biblioteca.model.Idioma;
+import com.dwigs.biblioteca.model.Libro;
 import com.dwigs.biblioteca.repository.IdiomaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
-public class IdiomaService extends InMemoryService<Idioma> {
+public class IdiomaService {
 
-    public IdiomaService(){
-        this.repository = new IdiomaRepository();
+    private final IdiomaRepository repository;
+
+    @Autowired
+    public IdiomaService(IdiomaRepository idiomaRepository) {
+        this.repository = idiomaRepository;
     }
 
-    @Override
-    public void validarCreacion(Idioma obj) {
-        if(obj.getNombre().isEmpty()){
-            throw new IllegalArgumentException("Debe indicar un nombre");
-        }
+    public List<Idioma> dameIdiomas(){
+        return repository.findAll();
     }
 
-    @Override
-    public void validarEdicion(Idioma obj) {
-        if(obj.getNombre().isEmpty()){
-            throw new IllegalArgumentException("Debe indicar un nombre");
-        }
-    }
+    public Long contarIdiomas() { return repository.count(); }
+    public Optional<Idioma> consultar(Long id) { return repository.findOneById(id); }
 }

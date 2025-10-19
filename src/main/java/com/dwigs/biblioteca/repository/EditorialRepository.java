@@ -1,8 +1,10 @@
 package com.dwigs.biblioteca.repository;
 
 import com.dwigs.biblioteca.model.Editorial;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-@Repository
-public class EditorialRepository extends InMemoryRepository<Editorial> {
+import java.util.Optional;
+
+public interface EditorialRepository extends JpaRepository<Editorial, Long> {
+    Optional<Editorial> findOneById(Long editorialId);
 }
