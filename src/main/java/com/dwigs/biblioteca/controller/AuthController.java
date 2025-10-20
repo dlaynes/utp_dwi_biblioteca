@@ -1,6 +1,6 @@
 package com.dwigs.biblioteca.controller;
 
-import com.dwigs.biblioteca.dto.request.LoginDTO;
+import com.dwigs.biblioteca.dto.request.LoginRequest;
 import com.dwigs.biblioteca.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,7 +27,7 @@ public class AuthController {
         if(logout != null){
             model.addAttribute("logoutText", "Sesión cerrada");
         }
-        model.addAttribute("login", new LoginDTO());
+        model.addAttribute("login", new LoginRequest());
         return "auth/login";
     }
 

@@ -4,7 +4,6 @@ import com.dwigs.biblioteca.model.*;
 import com.dwigs.biblioteca.repository.PerfilRepository;
 import com.dwigs.biblioteca.repository.RolRepository;
 import com.dwigs.biblioteca.repository.UsuarioRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -112,7 +111,7 @@ public class UsuarioInitializer {
             perfil.setTelefono("999999998");
             perfil.setTipoDocumento(TipoDocumento.dni);
             perfil.setNumeroDocumento("00000001");
-            perfil.setEmailPersonal("admin@biblioteca.com");
+            perfil.setEmailPersonal("mantenimiento@biblioteca.com");
             perfilRepository.save(perfil);
 
             bibliotecario.setPerfil(perfil);

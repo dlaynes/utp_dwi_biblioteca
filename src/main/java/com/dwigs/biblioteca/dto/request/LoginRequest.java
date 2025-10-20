@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class LoginDTO {
+public class LoginRequest {
 
     @NotBlank(message = "La contraseña no puede estar en blanco")
     private String password;
