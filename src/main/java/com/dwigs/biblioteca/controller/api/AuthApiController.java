@@ -9,6 +9,7 @@ import com.dwigs.biblioteca.repository.RolRepository;
 import com.dwigs.biblioteca.repository.UsuarioRepository;
 import com.dwigs.biblioteca.security.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -44,8 +45,9 @@ public class AuthApiController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request){
+    @PostMapping(value="/login", produces=MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> login(
+            @RequestBody LoginRequest request){
         try {
             Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
@@ -60,7 +62,7 @@ public class AuthApiController {
         }
     }
 
-    @PostMapping("/register")
+    @PostMapping(value="/register", produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> register(@RequestBody RegisterRequest request){
         if(usuarioRepository.findByEmail(request.getEmail()) != null){
             return ResponseEntity.badRequest().body("Ya existe un usuario con el correo electrónico indicado");
