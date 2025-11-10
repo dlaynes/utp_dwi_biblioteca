@@ -1,7 +1,5 @@
 package com.dwigs.biblioteca.security;
 
-import com.dwigs.biblioteca.security.utils.JwtAuthFilter;
-import com.dwigs.biblioteca.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,18 +8,25 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@EnableWebSecurity
+@EnableWebSecurity(debug = true)
 public class BibliotecaSecurityConfig {
 
     @Autowired
-    private UsuarioService usuarioService;
+    private JwtTokenFilter jwtTokenFilter;
+
+    @Autowired
+    private UserDetailsService usuarioService;
+
+    @Autowired
+    private JwtAuthenticationEntryPoint point;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -29,48 +34,45 @@ public class BibliotecaSecurityConfig {
     }
 
     @Bean
-    public DaoAuthenticationProvider authProvider(UsuarioService usuarioService, PasswordEncoder encoder){
+    public DaoAuthenticationProvider authProvider(){
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider(usuarioService);
-        provider.setPasswordEncoder(encoder);
+        provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
-        return authConfig.getAuthenticationManager();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) {
+        try {
+            return authConfig.getAuthenticationManager();
+        } catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthFilter jwtFilter) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // En proyectos normales se debe habilitar el crsf check, pero para facilitar la programación lo deshabilitamos
-                .csrf(AbstractHttpConfigurer::disable)
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.disable())
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/api/publico/**").hasAnyAuthority("Admin", "Bibliotecario", "Cliente")
                         // Páginas de administradores
-                        .requestMatchers("/api/admin/**").hasAuthority("Admin")
+                        .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
                         // Páginas de Bibliotecarios
-                        .requestMatchers("/api/bibliotecario/**").hasAuthority("Bibliotecario")
+                        .requestMatchers("/api/bibliotecario/**").hasAuthority("ROLE_BIBLIOTECARIO")
                         // Páginas de Clientes
-                        .requestMatchers("/api/cliente/**").hasAuthority("Cliente")
+                        .requestMatchers("/api/cliente/**").hasAuthority("ROLE_CLIENTE")
                         // Otros servicios
-                        .anyRequest().permitAll()
-                );
-        http.formLogin(form -> form
-                        .loginPage("/auth/login")
-                        .usernameParameter("email")
-                        .loginProcessingUrl("/auth/do_login")
-                        .defaultSuccessUrl("/", true)
-                        .failureUrl("/auth/login?error=true")
-                        .permitAll())
-                .rememberMe(rememberMe -> rememberMe.key("bibliotecaSecret"));
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .exceptionHandling(ex->ex.authenticationEntryPoint(point))
+                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(authProvider())
+                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
-        http.logout(logout -> logout
-                .logoutUrl("/auth/logout")
-                .logoutSuccessUrl("/auth/login?logout=true")
-                .permitAll());
-        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
+
     }
 
 }

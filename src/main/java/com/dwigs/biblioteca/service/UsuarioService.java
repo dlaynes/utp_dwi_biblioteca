@@ -5,23 +5,18 @@ import com.dwigs.biblioteca.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
-public class UsuarioService implements UserDetailsService {
+public class UsuarioService {
 
     @Autowired
-
     private UsuarioRepository usuarioRepository;
 
-    // Preferimos el uso de correo para no obligar al visitante a pensar en un nombre de cuenta,
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public Usuario dameUsuarioPorNombre(String username) throws UsernameNotFoundException {
         return usuarioRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("No se encontró el usuario " + username));
     }
 

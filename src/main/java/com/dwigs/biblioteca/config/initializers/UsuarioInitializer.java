@@ -1,7 +1,7 @@
 package com.dwigs.biblioteca.config.initializers;
 
 import com.dwigs.biblioteca.model.*;
-import com.dwigs.biblioteca.repository.PerfilRepository;
+
 import com.dwigs.biblioteca.repository.RolRepository;
 import com.dwigs.biblioteca.repository.UsuarioRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -20,16 +20,15 @@ public class UsuarioInitializer {
     @Bean
     public CommandLineRunner initUsuarios(
             UsuarioRepository usuarioRepository,
-            RolRepository rolRepository,
-            PerfilRepository perfilRepository
+            RolRepository rolRepository
     ){
         return args -> {
-            crearAdmin(usuarioRepository, rolRepository, perfilRepository);
-            crearBibliotecario(usuarioRepository, rolRepository, perfilRepository);
-            Optional<Rol> rolOptional = rolRepository.findByNombre("Cliente");
+            crearAdmin(usuarioRepository, rolRepository);
+            crearBibliotecario(usuarioRepository, rolRepository);
+            Optional<Rol> rolOptional = rolRepository.findByNombre("CLIENTE");
             if(rolOptional.isEmpty()){
                 Rol nuevoRol = new Rol();
-                nuevoRol.setNombre("Cliente");
+                nuevoRol.setNombre("CLIENTE");
                 rolRepository.save(nuevoRol);
             }
         };
@@ -37,14 +36,13 @@ public class UsuarioInitializer {
 
     private void crearAdmin(
             UsuarioRepository usuarioRepository,
-            RolRepository rolRepository,
-            PerfilRepository perfilRepository
-    ) throws Exception {
-        Optional<Rol> rolAdmin = rolRepository.findByNombre("Admin");
+            RolRepository rolRepository
+    ) {
+        Optional<Rol> rolAdmin = rolRepository.findByNombre("ADMIN");
         Rol rol;
         if(rolAdmin.isEmpty()){
             Rol nuevoRol = new Rol();
-            nuevoRol.setNombre("Admin");
+            nuevoRol.setNombre("ADMIN");
             rol = rolRepository.save(nuevoRol);
         } else {
             rol = rolAdmin.get();
@@ -58,35 +56,28 @@ public class UsuarioInitializer {
             roles.add(rol);
             admin.setRoles(roles);
             admin.setEmail("admin@biblioteca.com");
-            usuarioRepository.save(admin);
+            admin.setNombres("Admin");
+            admin.setApellidos("Instrador");
+            admin.setEstadoCivil(EstadoCivil.soltero);
+            admin.setGenero(Genero.masculino);
+            admin.setTelefono("999999999");
+            admin.setTipoDocumento(TipoDocumento.dni);
+            admin.setNumeroDocumento("00000000");
+            admin.setEmailPersonal("admin@biblioteca.com");
 
-            Perfil perfil = new Perfil();
-            perfil.setUsuario(admin);
-            perfil.setNombres("Admin");
-            perfil.setApellidos("Instrador");
-            perfil.setEstadoCivil(EstadoCivil.soltero);
-            perfil.setGenero(Genero.masculino);
-            perfil.setTelefono("999999999");
-            perfil.setTipoDocumento(TipoDocumento.dni);
-            perfil.setNumeroDocumento("00000000");
-            perfil.setEmailPersonal("admin@biblioteca.com");
-            perfilRepository.save(perfil);
-
-            admin.setPerfil(perfil);
             usuarioRepository.save(admin);
         }
     }
 
     private void crearBibliotecario(
             UsuarioRepository usuarioRepository,
-            RolRepository rolRepository,
-            PerfilRepository perfilRepository
-    ) throws Exception {
-        Optional<Rol> rolOptional = rolRepository.findByNombre("Bibliotecario");
+            RolRepository rolRepository
+    ) {
+        Optional<Rol> rolOptional = rolRepository.findByNombre("BIBLIOTECARIO");
         Rol rol;
         if(rolOptional.isEmpty()){
             Rol nuevoRol = new Rol();
-            nuevoRol.setNombre("Bibliotecario");
+            nuevoRol.setNombre("BIBLIOTECARIO");
             rol = rolRepository.save(nuevoRol);
         } else {
             rol = rolOptional.get();
@@ -100,22 +91,16 @@ public class UsuarioInitializer {
             roles.add(rol);
             bibliotecario.setRoles(roles);
             bibliotecario.setEmail("mantenimiento@biblioteca.com");
+            bibliotecario.setNombres("Biblio");
+            bibliotecario.setApellidos("Tecario");
+            bibliotecario.setEstadoCivil(EstadoCivil.soltero);
+            bibliotecario.setGenero(Genero.masculino);
+            bibliotecario.setTelefono("999999998");
+            bibliotecario.setTipoDocumento(TipoDocumento.dni);
+            bibliotecario.setNumeroDocumento("00000001");
+            bibliotecario.setEmailPersonal("mantenimiento@biblioteca.com");
             usuarioRepository.save(bibliotecario);
 
-            Perfil perfil = new Perfil();
-            perfil.setUsuario(bibliotecario);
-            perfil.setNombres("Biblio");
-            perfil.setApellidos("Tecario");
-            perfil.setEstadoCivil(EstadoCivil.soltero);
-            perfil.setGenero(Genero.masculino);
-            perfil.setTelefono("999999998");
-            perfil.setTipoDocumento(TipoDocumento.dni);
-            perfil.setNumeroDocumento("00000001");
-            perfil.setEmailPersonal("mantenimiento@biblioteca.com");
-            perfilRepository.save(perfil);
-
-            bibliotecario.setPerfil(perfil);
-            usuarioRepository.save(bibliotecario);
         }
     }
 

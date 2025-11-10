@@ -1,25 +1,22 @@
 package com.dwigs.biblioteca.controller.api.admin;
 
 import com.dwigs.biblioteca.dto.request.CrearLibroDTO;
-import com.dwigs.biblioteca.model.*;
+import com.dwigs.biblioteca.model.Libro;
 import com.dwigs.biblioteca.repository.LibroRepository;
 import com.dwigs.biblioteca.service.AutorService;
 import com.dwigs.biblioteca.service.EditorialService;
 import com.dwigs.biblioteca.service.IdiomaService;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @RestController()
 @RequestMapping("/api/admin/libros")
-@ComponentScan("org.dwigs.biblioteca.repository.LibroRepository")
 public class LibrosApiController {
 
     private LibroRepository libroRepository;
@@ -43,20 +40,19 @@ public class LibrosApiController {
         this.idiomaService = idiomaService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<Libro>> listar(){
-
-        return ResponseEntity.ok(libroRepository.findAll());
+    @GetMapping()
+    public List<Libro> listar(){
+        return libroRepository.findAll();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{id}", produces= MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Libro> consultar(@PathVariable long id){
 
         Optional<Libro> libro = libroRepository.findOneById(id);
         return libro.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping
+    @PostMapping(produces= MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Libro> crear(@RequestBody CrearLibroDTO crearLibroDTO){
 
         Libro libro = crearLibroDTO.obtenerLibro();
@@ -68,7 +64,7 @@ public class LibrosApiController {
         return ResponseEntity.created(URI.create("/api/admin/libros/"+ libro.getId())).body(libroCreado);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(value="/{id}", produces= MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Libro> reemplazar(@PathVariable long id, @RequestBody CrearLibroDTO editarLibroDTO){
 
         Libro libro = editarLibroDTO.obtenerLibro();
@@ -78,7 +74,7 @@ public class LibrosApiController {
         return ResponseEntity.ok(libroRepository.save(libro));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(value="/{id}", produces= MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> eliminar(@PathVariable long id){
        libroRepository.deleteById(id);
        return ResponseEntity.noContent().build(); //ResponseEntity.notFound().build();

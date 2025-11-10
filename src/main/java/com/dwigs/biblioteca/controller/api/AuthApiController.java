@@ -7,34 +7,33 @@ import com.dwigs.biblioteca.model.Rol;
 import com.dwigs.biblioteca.model.Usuario;
 import com.dwigs.biblioteca.repository.RolRepository;
 import com.dwigs.biblioteca.repository.UsuarioRepository;
-import com.dwigs.biblioteca.security.utils.JwtUtil;
+import com.dwigs.biblioteca.security.JwtTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 @RequestMapping("/api/auth")
-@Controller
+@RestController
 public class AuthApiController {
-    @Autowired
-    private AuthenticationManager authenticationManager;
 
     @Autowired
-    private JwtUtil jwtUtil;
+    private JwtTokenService jwtTokenService;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -45,20 +44,17 @@ public class AuthApiController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @PostMapping(value="/login", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> login(
-            @RequestBody LoginRequest request){
-        try {
-            Authentication authentication = authenticationManager.authenticate(
+    @PostMapping("/login")
+    public ResponseEntity<?>  authenticateAndGetToken( @RequestBody LoginRequest request){
+        Authentication auth = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-            );
-            UserDetails user = (UserDetails) authentication.getPrincipal();
-            List<String> roles = user.getAuthorities().stream().map(a -> a.getAuthority()).toList();
-            String token = jwtUtil.createToken(user.getUsername(), roles);
+        );
+        if(auth.isAuthenticated()){
 
-            return ResponseEntity.ok(new TokenResponse(token));
-        } catch(BadCredentialsException ex){
-            return ResponseEntity.status(401).body("Credenciales inválidas");
+            return ResponseEntity.ok(new TokenResponse(jwtTokenService.generateToken(request.getEmail())));
+
+        } else {
+            throw new UsernameNotFoundException("Usuario no encontrado o contraseña inválida");
         }
     }
 
