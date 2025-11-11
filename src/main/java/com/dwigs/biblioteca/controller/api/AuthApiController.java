@@ -50,9 +50,7 @@ public class AuthApiController {
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
         if(auth.isAuthenticated()){
-
-            return ResponseEntity.ok(new TokenResponse(jwtTokenService.generateToken(request.getEmail())));
-
+            return ResponseEntity.ok(new TokenResponse(jwtTokenService.generateToken(request.getEmail()), auth.getAuthorities()));
         } else {
             throw new UsernameNotFoundException("Usuario no encontrado o contraseña inválida");
         }
