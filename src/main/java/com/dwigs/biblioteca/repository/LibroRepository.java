@@ -11,4 +11,6 @@ public interface LibroRepository extends JpaRepository<Libro, Long> {
     Optional<Libro> findOneById(Long libroId);
 
     List<Libro> findAll();
+
+    List<Libro> findByCategoria_Slug(String categoriaSlug);
 }

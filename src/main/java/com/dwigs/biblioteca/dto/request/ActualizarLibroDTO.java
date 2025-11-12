@@ -8,17 +8,21 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
 @NoArgsConstructor
-public class CrearLibroDTO {
+public class ActualizarLibroDTO {
 
     private String titulo;
 
     private long autorId;
 
     private String ibsm;
+
+    private String imagen;
 
     private long editorialId;
 
@@ -32,12 +36,15 @@ public class CrearLibroDTO {
 
     @Convert(converter = GeneroLiterarioAttributeConverter.class)
     private GeneroLiterario generoLiterario;
-    
+
+    private Set<Categoria> categorias = new HashSet<>();
+
     public Libro obtenerLibro(){
         Libro libro = new Libro();
         libro.setTitulo(this.getTitulo());
         libro.setIbsm(this.getIbsm());
         libro.setNacionalidad(this.getNacionalidad());
+        libro.setImagen(this.getImagen());
         libro.setPublicadoEn(this.getPublicadoEn());
         libro.setPaginas(this.getPaginas());
         libro.setGeneroLiterario(this.getGeneroLiterario());

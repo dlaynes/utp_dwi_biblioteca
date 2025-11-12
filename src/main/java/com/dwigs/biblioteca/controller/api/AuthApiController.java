@@ -3,6 +3,7 @@ package com.dwigs.biblioteca.controller.api;
 import com.dwigs.biblioteca.dto.request.LoginRequest;
 import com.dwigs.biblioteca.dto.request.RegisterRequest;
 import com.dwigs.biblioteca.dto.response.TokenResponse;
+import com.dwigs.biblioteca.model.EstadoUsuario;
 import com.dwigs.biblioteca.model.Rol;
 import com.dwigs.biblioteca.model.Usuario;
 import com.dwigs.biblioteca.repository.RolRepository;
@@ -72,9 +73,19 @@ public class AuthApiController {
         Set<Rol> roles = new HashSet<>();
         roles.add(rolOptional.get());
         u.setRoles(roles);
+
+        u.setNombres(request.getNombres());
+        u.setApellidos(request.getApellidos());
+        u.setTelefono(request.getTelefono());
+        u.setEmailPersonal(request.getEmail());
+        u.setTipoDocumento(request.getTipoDocumento());
+        u.setGenero(request.getGenero());
+        u.setEstadoCivil(request.getEstadoCivil());
+        u.setEstadoUsuario(EstadoUsuario.normal);
+
         usuarioRepository.save(u);
 
-        return ResponseEntity.ok("Usuario creado");
+        return ResponseEntity.ok().body(true);
     }
 
 }

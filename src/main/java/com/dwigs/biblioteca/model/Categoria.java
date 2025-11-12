@@ -1,0 +1,51 @@
+package com.dwigs.biblioteca.model;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+
+@Setter
+@Getter
+@NoArgsConstructor
+@Entity
+@Table(name = "categoria")
+public class Categoria {
+    @Id()
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="id", columnDefinition = "BIGINT")
+    private long id;
+
+    @CreationTimestamp
+    @Column(name="fecha_registro")
+    @Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime fechaRegistro;
+
+    @Column(name="slug", nullable = false, unique = true)
+    private String slug;
+
+    @Column(name="nombre", nullable = false)
+    private String nombre;
+
+    @Column(name="imagen")
+    private String imagen;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "categoria_padre_id")
+    private Categoria categoriaPadre;
+
+    @OneToMany(mappedBy = "categoriaPadre")
+    private Set<Categoria> subCategories = new HashSet<>();
+
+    public Categoria(String slug, String nombre, LocalDateTime fechaRegistro){
+        this.slug = slug;
+        this.nombre = nombre;
+        this.fechaRegistro = fechaRegistro;
+    }
+
+}

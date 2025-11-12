@@ -1,13 +1,15 @@
 package com.dwigs.biblioteca.model;
 
+import com.dwigs.biblioteca.model.converter.GeneroLiterarioAttributeConverter;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.time.LocalDateTime;
-
-import com.dwigs.biblioteca.model.converter.GeneroLiterarioAttributeConverter;
 import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -43,6 +45,9 @@ public class Libro  {
     @JoinColumn(name="idioma_id", nullable = false)
     private Idioma idioma;
 
+    @Column(name="imagen")
+    private String imagen;
+
     @Column(name="nacionalidad", nullable = false)
     private String nacionalidad;
 
@@ -56,5 +61,11 @@ public class Libro  {
     @Column(name="estado", length = 16)
     @Convert(converter = GeneroLiterarioAttributeConverter.class)
     private GeneroLiterario generoLiterario;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "categoria_libro",
+            joinColumns = @JoinColumn(name = "libro_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "categoria_id", referencedColumnName = "id"))
+    private Set<Categoria> categorias = new HashSet<>();
 
 }

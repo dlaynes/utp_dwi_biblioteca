@@ -44,4 +44,7 @@ public class InventarioLibro {
     @Column(name="perdidos")
     private int perdidos;
 
+    private int total(){
+        return disponibles +  reservados + prestados;
+    }
 }

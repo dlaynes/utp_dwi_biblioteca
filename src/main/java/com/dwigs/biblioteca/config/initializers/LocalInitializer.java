@@ -18,7 +18,6 @@ import java.util.List;
 @Configuration
 public class LocalInitializer {
 
-    // Sí se va a agregar idiomas, borrar los registros existentes, o implementar nueva lógica
     public static List<Idioma> idiomas = Arrays.asList(
             new Idioma(LocalDateTime.now(), "Español", "ES"),
             new Idioma(LocalDateTime.now(), "Inglés", "EN"),
