@@ -68,8 +68,6 @@ public class LibrosApiController {
         libro.setIdioma(idiomaService.consultar(crearLibroDTO.getIdiomaId()).orElseThrow());
         libro.setEditorial(editorialService.consultar(crearLibroDTO.getEditorialId()).orElseThrow());
 
-        // TODO: categorias
-
         Libro libroCreado = libroRepository.save(libro);
         return ResponseEntity.created(URI.create("/api/admin/libros/"+ libro.getId())).body(libroCreado);
     }

@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class AceptarPrestamoDTO {
 
-    // Debería ser automático?
     private LocalDateTime fechaEsperadaDeRetorno;
 
     private String observacionesEntrega;

@@ -131,7 +131,7 @@ public class PrestamosApiController {
         prestamo.setEntregadoPor(bibliotecario);
         prestamo.setFechaPrestamo(hoy);
         prestamo.setObservacionesEntrega(aceptarPrestamoDTO.getObservacionesEntrega());
-        prestamo.setFechaEsperadaRetorno(hoy.plusDays(30)); // TODO: definir los dias por defecto en otro lugar
+        prestamo.setFechaEsperadaRetorno(aceptarPrestamoDTO.getFechaEsperadaDeRetorno()); // TODO: definir los dias por defecto en otro lugar
         prestamo.setEstadoPrestamo(EstadoPrestamo.prestado);
         prestamoService.actualizar(id, prestamo);
 
@@ -152,6 +152,7 @@ public class PrestamosApiController {
         prestamo.setFechaRetorno(hoy);
         prestamo.setObservacionesRetorno(recibirPrestamoDTO.getObservacionesRetorno());
         prestamo.setEstadoPrestamo(EstadoPrestamo.entregado);
+        prestamo.setAdvertencia(recibirPrestamoDTO.isAdvertencia());
         prestamoService.actualizar(id, prestamo);
 
         inventarioLibroService.actualizarEstado(prestamo.getInventarioLibro().getId());

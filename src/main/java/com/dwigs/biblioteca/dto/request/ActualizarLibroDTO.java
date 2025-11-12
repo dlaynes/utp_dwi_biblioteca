@@ -48,6 +48,7 @@ public class ActualizarLibroDTO {
         libro.setPublicadoEn(this.getPublicadoEn());
         libro.setPaginas(this.getPaginas());
         libro.setGeneroLiterario(this.getGeneroLiterario());
+        libro.setCategorias(this.getCategorias());
         return libro;
     }
 }
