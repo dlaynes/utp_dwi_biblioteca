@@ -26,7 +26,7 @@ public class InventarioLibroService {
     @Transactional
     public void agregarEntregado(Long inventarioLibroId){
         InventarioLibro inventarioLibro = inventarioLibroRepository.findOneById(inventarioLibroId).orElseThrow();
-        Long prestados = prestamoRepository.countByInventarioIdAndEstadoPrestamo(inventarioLibroId, EstadoPrestamo.prestado);
+        Long prestados = prestamoRepository.countByInventarioLibroAndEstadoPrestamo(inventarioLibro, EstadoPrestamo.prestado);
 
         inventarioLibro.setDisponibles(inventarioLibro.getDisponibles() + 1);
         inventarioLibro.setPrestados(prestados);
@@ -36,8 +36,8 @@ public class InventarioLibroService {
     @Transactional
     public void agregarPerdido(Long inventarioLibroId){
         InventarioLibro inventarioLibro = inventarioLibroRepository.findOneById(inventarioLibroId).orElseThrow();
-        Long perdidos = prestamoRepository.countByInventarioIdAndEstadoPrestamo(inventarioLibroId, EstadoPrestamo.perdido);
-        Long prestados = prestamoRepository.countByInventarioIdAndEstadoPrestamo(inventarioLibroId, EstadoPrestamo.prestado);
+        Long perdidos = prestamoRepository.countByInventarioLibroAndEstadoPrestamo(inventarioLibro, EstadoPrestamo.perdido);
+        Long prestados = prestamoRepository.countByInventarioLibroAndEstadoPrestamo(inventarioLibro, EstadoPrestamo.prestado);
 
         inventarioLibro.setPerdidos(perdidos);
         inventarioLibro.setPrestados(prestados);
@@ -47,7 +47,7 @@ public class InventarioLibroService {
     @Transactional
     public void agregarPrestado(Long inventarioLibroId){
         InventarioLibro inventarioLibro = inventarioLibroRepository.findOneById(inventarioLibroId).orElseThrow();
-        Long prestados = prestamoRepository.countByInventarioIdAndEstadoPrestamo(inventarioLibroId, EstadoPrestamo.prestado);
+        Long prestados = prestamoRepository.countByInventarioLibroAndEstadoPrestamo(inventarioLibro, EstadoPrestamo.prestado);
 
         inventarioLibro.setDisponibles(inventarioLibro.getDisponibles() -1);
         inventarioLibro.setPrestados(prestados);
