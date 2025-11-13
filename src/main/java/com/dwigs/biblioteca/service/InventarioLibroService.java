@@ -1,12 +1,57 @@
 package com.dwigs.biblioteca.service;
 
+import com.dwigs.biblioteca.model.EstadoPrestamo;
+import com.dwigs.biblioteca.model.InventarioLibro;
+import com.dwigs.biblioteca.repository.InventarioLibroRepository;
+import com.dwigs.biblioteca.repository.PrestamoRepository;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class InventarioLibroService {
 
-    public void actualizarEstado(Long inventarioLibroId){
+    PrestamoRepository prestamoRepository;
+    InventarioLibroRepository inventarioLibroRepository;
 
+    @Autowired
+    public InventarioLibroService(
+            PrestamoRepository prestamoRepository,
+            InventarioLibroRepository inventarioLibroRepository
+    ){
+        this.prestamoRepository = prestamoRepository;
+        this.inventarioLibroRepository = inventarioLibroRepository;
+    }
+
+    @Transactional
+    public void agregarEntregado(Long inventarioLibroId){
+        InventarioLibro inventarioLibro = inventarioLibroRepository.findOneById(inventarioLibroId).orElseThrow();
+        Long prestados = prestamoRepository.countByInventarioIdAndEstadoPrestamo(inventarioLibroId, EstadoPrestamo.prestado);
+
+        inventarioLibro.setDisponibles(inventarioLibro.getDisponibles() + 1);
+        inventarioLibro.setPrestados(prestados);
+        inventarioLibroRepository.save(inventarioLibro);
+    }
+
+    @Transactional
+    public void agregarPerdido(Long inventarioLibroId){
+        InventarioLibro inventarioLibro = inventarioLibroRepository.findOneById(inventarioLibroId).orElseThrow();
+        Long perdidos = prestamoRepository.countByInventarioIdAndEstadoPrestamo(inventarioLibroId, EstadoPrestamo.perdido);
+        Long prestados = prestamoRepository.countByInventarioIdAndEstadoPrestamo(inventarioLibroId, EstadoPrestamo.prestado);
+
+        inventarioLibro.setPerdidos(perdidos);
+        inventarioLibro.setPrestados(prestados);
+        inventarioLibroRepository.save(inventarioLibro);
+    }
+
+    @Transactional
+    public void agregarPrestado(Long inventarioLibroId){
+        InventarioLibro inventarioLibro = inventarioLibroRepository.findOneById(inventarioLibroId).orElseThrow();
+        Long prestados = prestamoRepository.countByInventarioIdAndEstadoPrestamo(inventarioLibroId, EstadoPrestamo.prestado);
+
+        inventarioLibro.setDisponibles(inventarioLibro.getDisponibles() -1);
+        inventarioLibro.setPrestados(prestados);
+        inventarioLibroRepository.save(inventarioLibro);
     }
 
 }

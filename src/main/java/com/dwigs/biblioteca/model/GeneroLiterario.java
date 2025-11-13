@@ -1,8 +1,5 @@
 package com.dwigs.biblioteca.model;
 
-
-import java.time.LocalDateTime;
-
 public enum GeneroLiterario {
 
     narrativo,

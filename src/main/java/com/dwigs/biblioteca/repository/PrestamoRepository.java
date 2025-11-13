@@ -19,4 +19,9 @@ public interface PrestamoRepository extends JpaRepository<Prestamo, Long> {
     List<Prestamo> findByClienteId(Long clienteId);
 
     List<Prestamo> findAll();
+
+    Long countByClienteId(Long clienteId);
+
+    Long countByInventarioIdAndEstadoPrestamo(Long inventarioId, EstadoPrestamo estadoPrestamo);
+
 }

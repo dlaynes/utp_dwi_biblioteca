@@ -4,6 +4,7 @@ import com.dwigs.biblioteca.dto.request.prestamo.AceptarPrestamoDTO;
 import com.dwigs.biblioteca.dto.request.prestamo.RecibirPrestamoDTO;
 import com.dwigs.biblioteca.dto.request.prestamo.SolicitarPrestamoDTO;
 import com.dwigs.biblioteca.model.EstadoPrestamo;
+import com.dwigs.biblioteca.model.InventarioLibro;
 import com.dwigs.biblioteca.model.Prestamo;
 import com.dwigs.biblioteca.model.Usuario;
 import com.dwigs.biblioteca.repository.InventarioLibroRepository;
@@ -76,7 +77,6 @@ public class PrestamosApiController {
 
         prestamo.setEstadoPrestamo(EstadoPrestamo.cancelado);
         prestamoService.actualizar(id, prestamo);
-        inventarioLibroService.actualizarEstado(prestamo.getInventarioLibro().getId());
         return ResponseEntity.ok().body(true);
     }
 
@@ -87,7 +87,6 @@ public class PrestamosApiController {
 
         prestamo.setEstadoPrestamo(EstadoPrestamo.cancelado);
         prestamoService.actualizar(id, prestamo);
-        inventarioLibroService.actualizarEstado(prestamo.getInventarioLibro().getId());
         return ResponseEntity.ok().body(true);
     }
 
@@ -114,17 +113,20 @@ public class PrestamosApiController {
         prestamo.setCliente(cliente);
         prestamo.setInventarioLibro(inventarioLibroRepository.findOneById(crearDTO.getInventarioLibroId()).orElseThrow());
         prestamoService.crear(prestamo);
-        inventarioLibroService.actualizarEstado(prestamo.getInventarioLibro().getId());
         // TODO: crear un DTO para la respuesta
         return ResponseEntity.created(URI.create("/api/cliente/prestamos/"+ prestamo.getId())).body(prestamo);
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_BIBLIOTECARIO', 'ROLE_ADMIN')")
     @PutMapping(value = "/aceptar/{id}")
-    public ResponseEntity<Prestamo> aceptarReserva(@RequestBody AceptarPrestamoDTO aceptarPrestamoDTO, @AuthenticationPrincipal User usuarioAuth, @PathVariable long id){
+    public ResponseEntity<?> aceptarReserva(@RequestBody AceptarPrestamoDTO aceptarPrestamoDTO, @AuthenticationPrincipal User usuarioAuth, @PathVariable long id){
         String email = usuarioAuth.getUsername();
         Usuario bibliotecario = usuarioRepository.findByEmail(email).orElseThrow();
         Prestamo prestamo = prestamoService.encontrarPorEstado( id, EstadoPrestamo.reservado).orElseThrow();
+        InventarioLibro inventarioLibro = prestamo.getInventarioLibro();
+        if(inventarioLibro.getDisponibles() < 1){
+            return ResponseEntity.badRequest().body("Actualmente no hay libros disponibles en el inventario");
+        }
 
         LocalDateTime hoy = LocalDateTime.now();
 
@@ -135,7 +137,7 @@ public class PrestamosApiController {
         prestamo.setEstadoPrestamo(EstadoPrestamo.prestado);
         prestamoService.actualizar(id, prestamo);
 
-        inventarioLibroService.actualizarEstado(prestamo.getInventarioLibro().getId());
+        inventarioLibroService.agregarPrestado(inventarioLibro.getId());
         return ResponseEntity.ok().body(prestamo);
     }
 
@@ -155,7 +157,7 @@ public class PrestamosApiController {
         prestamo.setAdvertencia(recibirPrestamoDTO.isAdvertencia());
         prestamoService.actualizar(id, prestamo);
 
-        inventarioLibroService.actualizarEstado(prestamo.getInventarioLibro().getId());
+        inventarioLibroService.agregarEntregado(prestamo.getInventarioLibro().getId());
         return ResponseEntity.ok().body(prestamo);
     }
 
@@ -166,7 +168,7 @@ public class PrestamosApiController {
 
         prestamo.setEstadoPrestamo(EstadoPrestamo.perdido);
         prestamoService.actualizar(id, prestamo);
-        inventarioLibroService.actualizarEstado(prestamo.getInventarioLibro().getId());
+        inventarioLibroService.agregarPerdido(prestamo.getInventarioLibro().getId());
         return ResponseEntity.ok().body(true);
     }
 

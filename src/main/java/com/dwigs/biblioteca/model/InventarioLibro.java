@@ -33,18 +33,18 @@ public class InventarioLibro {
     private Libro libro;
 
     @Column(name="disponibles")
-    private int disponibles;
+    private long disponibles;
 
     @Column(name="reservados")
-    private int reservados;
+    private long reservados;
 
     @Column(name="prestados")
-    private int prestados;
+    private long prestados;
 
     @Column(name="perdidos")
-    private int perdidos;
+    private long perdidos;
 
-    private int total(){
-        return disponibles +  reservados + prestados;
+    private long existentes(){
+        return disponibles + prestados;
     }
 }

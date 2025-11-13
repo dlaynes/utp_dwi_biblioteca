@@ -4,6 +4,7 @@ import com.dwigs.biblioteca.model.converter.EstadoCivilAttributeConverter;
 import com.dwigs.biblioteca.model.converter.EstadoUsuarioAttributeConverter;
 import com.dwigs.biblioteca.model.converter.GeneroAttributeConverter;
 import com.dwigs.biblioteca.model.converter.TipoDocumentoAttributeConverter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,6 +29,7 @@ public class Usuario {
     @Column(name="email", length = 150, nullable = false)
     private String email;
 
+    @JsonIgnore
     @Column(name="password")
     private String password;
 
@@ -71,6 +73,7 @@ public class Usuario {
     @Convert(converter = GeneroAttributeConverter.class)
     private Genero genero;
 
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "usuario_rol",
             joinColumns = @JoinColumn(name = "usuario_id", referencedColumnName = "id"),

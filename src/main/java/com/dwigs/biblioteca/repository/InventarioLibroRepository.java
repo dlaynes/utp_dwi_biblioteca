@@ -12,4 +12,5 @@ public interface InventarioLibroRepository extends JpaRepository<InventarioLibro
     List<InventarioLibro> findAll();
 
     List<InventarioLibro> findByLibroId(Long libroId);
+
 }
