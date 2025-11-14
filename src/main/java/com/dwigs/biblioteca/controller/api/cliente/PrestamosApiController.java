@@ -9,6 +9,7 @@ import com.dwigs.biblioteca.model.Prestamo;
 import com.dwigs.biblioteca.model.Usuario;
 import com.dwigs.biblioteca.repository.InventarioLibroRepository;
 import com.dwigs.biblioteca.repository.UsuarioRepository;
+import com.dwigs.biblioteca.security.JwtUserDetails;
 import com.dwigs.biblioteca.service.InventarioLibroService;
 import com.dwigs.biblioteca.service.PrestamoService;
 import jakarta.transaction.Transactional;
@@ -16,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -56,23 +56,23 @@ public class PrestamosApiController {
 
     @PreAuthorize("hasAnyAuthority('ROLE_CLIENTE', 'ROLE_BIBLIOTECARIO', 'ROLE_ADMIN')")
     @GetMapping("/mis-solicitudes")
-    public List<Prestamo> listarMisPrestamos(@AuthenticationPrincipal User usuarioAuth){
-        String email = usuarioAuth.getUsername();
+    public List<Prestamo> listarMisPrestamos(@AuthenticationPrincipal JwtUserDetails userDetails){
+        String email = userDetails.getUsername();
         Usuario usuario = usuarioRepository.findByEmail(email).orElseThrow();
         return prestamoService.listarDeCliente(usuario.getId());
     }
 
     @GetMapping(value = "/mis-solicitudes/{id}")
-    public ResponseEntity<Prestamo> consultarMiPrestamo(@AuthenticationPrincipal User usuarioAuth, @PathVariable long id){
-        String email = usuarioAuth.getUsername();
+    public ResponseEntity<Prestamo> consultarMiPrestamo(@AuthenticationPrincipal JwtUserDetails userDetails, @PathVariable long id){
+        String email = userDetails.getUsername();
         Usuario usuario = usuarioRepository.findByEmail(email).orElseThrow();
         Optional<Prestamo> obj = prestamoService.damePrestamoDeUsuario(id, usuario.getId());
         return obj.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping(value = "/mis-solicitudes/cancelar/{id}")
-    public ResponseEntity<Boolean> cancelarMiReserva(@AuthenticationPrincipal User usuarioAuth, @PathVariable long id){
-        String email = usuarioAuth.getUsername();
+    public ResponseEntity<Boolean> cancelarMiReserva(@AuthenticationPrincipal JwtUserDetails userDetails, @PathVariable long id){
+        String email = userDetails.getUsername();
         Usuario usuario = usuarioRepository.findByEmail(email).orElseThrow();
         Prestamo prestamo = prestamoService.damePrestamoDeUsuarioConEstado(id, usuario.getId(), EstadoPrestamo.reservado).orElseThrow();
 
@@ -102,8 +102,8 @@ public class PrestamosApiController {
     // Cualquier rol puede reservar un libro
     @PreAuthorize("hasAnyAuthority('ROLE_CLIENTE', 'ROLE_BIBLIOTECARIO', 'ROLE_ADMIN')")
     @PostMapping(value = "/reservar")
-    public ResponseEntity<Prestamo> reservarLibro(@RequestBody SolicitarPrestamoDTO crearDTO, @AuthenticationPrincipal User usuarioAuth){
-        String email = usuarioAuth.getUsername();
+    public ResponseEntity<Prestamo> reservarLibro(@RequestBody SolicitarPrestamoDTO crearDTO, @AuthenticationPrincipal JwtUserDetails userDetails){
+        String email = userDetails.getUsername();
         Usuario cliente = usuarioRepository.findByEmail(email).orElseThrow();
 
         Prestamo prestamo = new Prestamo();
@@ -121,8 +121,8 @@ public class PrestamosApiController {
     @Transactional
     @PreAuthorize("hasAnyAuthority('ROLE_BIBLIOTECARIO', 'ROLE_ADMIN')")
     @PutMapping(value = "/aceptar/{id}")
-    public ResponseEntity<?> aceptarReserva(@RequestBody AceptarPrestamoDTO aceptarPrestamoDTO, @AuthenticationPrincipal User usuarioAuth, @PathVariable long id){
-        String email = usuarioAuth.getUsername();
+    public ResponseEntity<?> aceptarReserva(@RequestBody AceptarPrestamoDTO aceptarPrestamoDTO, @AuthenticationPrincipal JwtUserDetails userDetails, @PathVariable long id){
+        String email = userDetails.getUsername();
         Usuario bibliotecario = usuarioRepository.findByEmail(email).orElseThrow();
         Prestamo prestamo = prestamoService.encontrarPorEstado( id, EstadoPrestamo.reservado).orElseThrow();
         InventarioLibro inventarioLibro = prestamo.getInventarioLibro();
@@ -146,8 +146,8 @@ public class PrestamosApiController {
     @Transactional
     @PreAuthorize("hasAnyAuthority('ROLE_BIBLIOTECARIO', 'ROLE_ADMIN')")
     @PutMapping(value = "/recibir/{id}")
-    public ResponseEntity<Prestamo> recibirLibro(@RequestBody RecibirPrestamoDTO recibirPrestamoDTO, @AuthenticationPrincipal User usuarioAuth, @PathVariable long id){
-        String email = usuarioAuth.getUsername();
+    public ResponseEntity<Prestamo> recibirLibro(@RequestBody RecibirPrestamoDTO recibirPrestamoDTO, @AuthenticationPrincipal JwtUserDetails userDetails, @PathVariable long id){
+        String email = userDetails.getUsername();
         Usuario bibliotecario = usuarioRepository.findByEmail(email).orElseThrow();
         Prestamo prestamo = prestamoService.encontrarPorEstado( id, EstadoPrestamo.prestado).orElseThrow();
 

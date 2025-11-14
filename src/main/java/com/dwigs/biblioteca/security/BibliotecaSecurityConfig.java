@@ -75,9 +75,9 @@ public class BibliotecaSecurityConfig {
                         // Páginas de administradores
                         .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
                         // Páginas de Bibliotecarios
-                        .requestMatchers("/api/bibliotecario/**").hasAuthority("ROLE_BIBLIOTECARIO")
+                        .requestMatchers("/api/bibliotecario/**").hasAnyAuthority("ROLE_BIBLIOTECARIO","ROLE_ADMIN")
                         // Páginas de Clientes
-                        .requestMatchers("/api/cliente/**").hasAuthority("ROLE_CLIENTE")
+                        .requestMatchers("/api/cliente/**").hasAnyAuthority("ROLE_CLIENTE", "ROLE_BIBLIOTECARIO","ROLE_ADMIN")
                         // Otros servicios
                         .requestMatchers("/api/auth/**").permitAll()
                         .anyRequest().permitAll()

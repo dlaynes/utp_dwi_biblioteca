@@ -1,8 +1,8 @@
 package com.dwigs.biblioteca.controller;
 
+import com.dwigs.biblioteca.security.JwtUserDetails;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
@@ -15,8 +15,8 @@ public class ControllerUtils {
     }
 
     @ModelAttribute("nombreUsuario")
-    String getNombreUsuario( @AuthenticationPrincipal User usuario) {
-        if (usuario == null) {
+    String getNombreUsuario(@AuthenticationPrincipal JwtUserDetails userDetails) {
+        if (userDetails == null) {
             return "Visitante";
         }
         // TODO, obtener nombre y apellido del perfil
