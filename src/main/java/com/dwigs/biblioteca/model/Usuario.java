@@ -42,7 +42,7 @@ public class Usuario {
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime ultimoLogin;
 
-    @Column(name="estado", length = 16)
+    @Column(name="estado", columnDefinition ="CHAR", length = 1)
     @Convert(converter = EstadoUsuarioAttributeConverter.class)
     private EstadoUsuario estadoUsuario;
 
@@ -61,15 +61,15 @@ public class Usuario {
     @Column(name="numero_documento", length = 20, nullable = false)
     private String numeroDocumento;
 
-    @Column(name="tipo_documento", length = 16)
+    @Column(name="tipo_documento", columnDefinition ="CHAR", length = 1)
     @Convert(converter = TipoDocumentoAttributeConverter.class)
     private TipoDocumento tipoDocumento;
 
-    @Column(name="estado_civil", length = 16)
+    @Column(name="estado_civil", columnDefinition ="CHAR", length = 1)
     @Convert(converter = EstadoCivilAttributeConverter.class)
     private EstadoCivil estadoCivil;
 
-    @Column(name="genero", length = 16)
+    @Column(name="genero", columnDefinition ="CHAR", length = 1)
     @Convert(converter = GeneroAttributeConverter.class)
     private Genero genero;
 

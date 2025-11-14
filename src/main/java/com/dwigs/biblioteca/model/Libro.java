@@ -58,7 +58,7 @@ public class Libro  {
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime publicadoEn;
 
-    @Column(name="estado", length = 16)
+    @Column(name="genero_literario", columnDefinition ="CHAR", length = 1)
     @Convert(converter = GeneroLiterarioAttributeConverter.class)
     private GeneroLiterario generoLiterario;
 

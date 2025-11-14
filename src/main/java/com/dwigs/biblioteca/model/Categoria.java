@@ -35,6 +35,12 @@ public class Categoria {
     @Column(name="imagen")
     private String imagen;
 
+    @Column(name="color")
+    private String color;
+
+    @Column(name="icono")
+    private String icono;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "categoria_padre_id")
     private Categoria categoriaPadre;
@@ -42,10 +48,12 @@ public class Categoria {
     @OneToMany(mappedBy = "categoriaPadre")
     private Set<Categoria> subCategories = new HashSet<>();
 
-    public Categoria(String slug, String nombre, LocalDateTime fechaRegistro){
+    public Categoria(String slug, String nombre, LocalDateTime fechaRegistro, String color, String icono){
         this.slug = slug;
         this.nombre = nombre;
         this.fechaRegistro = fechaRegistro;
+        this.color = color;
+        this.icono = icono;
     }
 
 }

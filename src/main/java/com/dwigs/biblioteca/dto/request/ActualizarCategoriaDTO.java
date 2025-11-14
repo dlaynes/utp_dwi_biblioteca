@@ -13,5 +13,9 @@ public class ActualizarCategoriaDTO {
 
     private String slug;
 
+    private String color;
+
+    private String icono;
+
     private Long categoriaPadre_id;
 }

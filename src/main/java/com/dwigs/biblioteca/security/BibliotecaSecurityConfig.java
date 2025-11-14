@@ -80,7 +80,7 @@ public class BibliotecaSecurityConfig {
                         .requestMatchers("/api/cliente/**").hasAuthority("ROLE_CLIENTE")
                         // Otros servicios
                         .requestMatchers("/api/auth/**").permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 .exceptionHandling(ex->ex.authenticationEntryPoint(point))
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

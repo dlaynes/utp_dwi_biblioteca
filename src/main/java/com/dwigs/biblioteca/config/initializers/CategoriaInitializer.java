@@ -17,11 +17,13 @@ import java.util.List;
 public class CategoriaInitializer {
 
     public static List<Categoria> categorias = Arrays.asList(
-        new Categoria("matematica", "Matemática", LocalDateTime.now()),
-        new Categoria("ciencias-medicas", "Ciencias Médicas", LocalDateTime.now()),
-        new Categoria("ciencias-sociales", "Ciencias Sociales", LocalDateTime.now()),
-        new Categoria("historia", "Historia", LocalDateTime.now()),
-        new Categoria("politica", "Política", LocalDateTime.now())
+        new Categoria("matematica", "Matemática", LocalDateTime.now(), "ico circle-burgundy", "fa-solid fa-ruler"),
+        new Categoria("ciencias-medicas", "Ciencias Médicas", LocalDateTime.now(), "ico circle-green", "fa-solid fa-stethoscope"),
+        new Categoria("ciencias-sociales", "Ciencias Sociales", LocalDateTime.now(), "ico circle-purple", "fa-solid fa-people-group"),
+        new Categoria("historia", "Historia", LocalDateTime.now(), "ico circle-gold", "fa-solid fa-scroll"),
+            new Categoria("programacion", "Programación", LocalDateTime.now(), "ico circle-teal", "fa-solid fa-java"),
+        new Categoria("politica", "Política", LocalDateTime.now(), "ico circle-blue", "fa-solid fa-landmark"),
+            new Categoria("humanidades", "Humanidades", LocalDateTime.now(), "circle-pink", "fa-solid fa-book-open")
     );
 
     @Bean

@@ -62,6 +62,8 @@ public class CategoriasApiController {
         }
         categoria.setNombre(crearDTO.getNombre());
         categoria.setSlug(crearDTO.getSlug());
+        categoria.setIcono(crearDTO.getIcono());
+        categoria.setColor(crearDTO.getColor());
 
         Categoria nuevo = categoriaRepository.save(categoria);
         return ResponseEntity.created(URI.create("/api/publico/categorias/"+ categoria.getId())).body(nuevo);
@@ -89,6 +91,8 @@ public class CategoriasApiController {
         }
         categoria.setNombre(editarDTO.getNombre());
         categoria.setSlug(editarDTO.getSlug());
+        categoria.setIcono(editarDTO.getIcono());
+        categoria.setColor(editarDTO.getColor());
 
         return ResponseEntity.ok(categoriaRepository.save(categoria));
     }

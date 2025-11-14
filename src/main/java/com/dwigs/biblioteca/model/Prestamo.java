@@ -22,11 +22,11 @@ public class Prestamo {
     @Column(name="id", columnDefinition = "BIGINT")
     private long id;
 
-    @Column(name="estado_prestamo", length = 16)
+    @Column(name="estado_prestamo", columnDefinition ="CHAR", length = 1)
     @Convert(converter = EstadoPrestamoAttributeConverter.class)
     private EstadoPrestamo estadoPrestamo;
 
-    @Column(name="lugar_prestamo", length = 16)
+    @Column(name="lugar_prestamo", columnDefinition ="CHAR", length = 1)
     @Convert(converter = LugarPrestamoAtributeConverter.class)
     private LugarPrestamo lugarPrestamo;
 

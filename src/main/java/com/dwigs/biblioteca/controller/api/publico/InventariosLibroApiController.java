@@ -44,7 +44,6 @@ public class InventariosLibroApiController {
         return inventarioLibroRepository.findAll();
     }
 
-    @PreAuthorize("hasAnyAuthority('ROLE_BIBLIOTECARIO', 'ROLE_ADMIN')")
     @GetMapping("/de-libro/{libroId}")
     public List<InventarioLibro> listarDeLibro(@PathVariable Long libroId){
         return inventarioLibroRepository.findByLibroId(libroId);
