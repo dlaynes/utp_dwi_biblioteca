@@ -23,7 +23,7 @@ public class CategoriaInitializer {
         new Categoria("historia", "Historia", LocalDateTime.now(), "ico circle-gold", "fa-solid fa-scroll"),
             new Categoria("programacion", "Programación", LocalDateTime.now(), "ico circle-teal", "fa-solid fa-java"),
         new Categoria("politica", "Política", LocalDateTime.now(), "ico circle-blue", "fa-solid fa-landmark"),
-            new Categoria("humanidades", "Humanidades", LocalDateTime.now(), "circle-pink", "fa-solid fa-book-open")
+            new Categoria("humanidades", "Humanidades", LocalDateTime.now(), "ico circle-pink", "fa-solid fa-book-open")
     );
 
     @Bean

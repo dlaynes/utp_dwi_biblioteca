@@ -46,7 +46,7 @@ public class Categoria {
     private Categoria categoriaPadre;
 
     @OneToMany(mappedBy = "categoriaPadre")
-    private Set<Categoria> subCategories = new HashSet<>();
+    private Set<Categoria> subCategorias = new HashSet<>();
 
     public Categoria(String slug, String nombre, LocalDateTime fechaRegistro, String color, String icono){
         this.slug = slug;
