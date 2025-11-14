@@ -11,6 +11,7 @@ import com.dwigs.biblioteca.repository.InventarioLibroRepository;
 import com.dwigs.biblioteca.repository.UsuarioRepository;
 import com.dwigs.biblioteca.service.InventarioLibroService;
 import com.dwigs.biblioteca.service.PrestamoService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -100,7 +101,7 @@ public class PrestamosApiController {
 
     // Cualquier rol puede reservar un libro
     @PreAuthorize("hasAnyAuthority('ROLE_CLIENTE', 'ROLE_BIBLIOTECARIO', 'ROLE_ADMIN')")
-    @PutMapping(value = "/reservar")
+    @PostMapping(value = "/reservar")
     public ResponseEntity<Prestamo> reservarLibro(@RequestBody SolicitarPrestamoDTO crearDTO, @AuthenticationPrincipal User usuarioAuth){
         String email = usuarioAuth.getUsername();
         Usuario cliente = usuarioRepository.findByEmail(email).orElseThrow();
@@ -117,6 +118,7 @@ public class PrestamosApiController {
         return ResponseEntity.created(URI.create("/api/cliente/prestamos/"+ prestamo.getId())).body(prestamo);
     }
 
+    @Transactional
     @PreAuthorize("hasAnyAuthority('ROLE_BIBLIOTECARIO', 'ROLE_ADMIN')")
     @PutMapping(value = "/aceptar/{id}")
     public ResponseEntity<?> aceptarReserva(@RequestBody AceptarPrestamoDTO aceptarPrestamoDTO, @AuthenticationPrincipal User usuarioAuth, @PathVariable long id){
@@ -141,6 +143,7 @@ public class PrestamosApiController {
         return ResponseEntity.ok().body(prestamo);
     }
 
+    @Transactional
     @PreAuthorize("hasAnyAuthority('ROLE_BIBLIOTECARIO', 'ROLE_ADMIN')")
     @PutMapping(value = "/recibir/{id}")
     public ResponseEntity<Prestamo> recibirLibro(@RequestBody RecibirPrestamoDTO recibirPrestamoDTO, @AuthenticationPrincipal User usuarioAuth, @PathVariable long id){
@@ -161,8 +164,9 @@ public class PrestamosApiController {
         return ResponseEntity.ok().body(prestamo);
     }
 
+    @Transactional
     @PreAuthorize("hasAnyAuthority('ROLE_BIBLIOTECARIO', 'ROLE_ADMIN')")
-    @GetMapping(value = "/marcar-como-perdido/{id}")
+    @PutMapping(value = "/marcar-como-perdido/{id}")
     public ResponseEntity<Boolean> prestamoPerdido(@PathVariable long id){
         Prestamo prestamo = prestamoService.encontrarPorEstado(id, EstadoPrestamo.prestado).orElseThrow();
 
@@ -172,5 +176,6 @@ public class PrestamosApiController {
         return ResponseEntity.ok().body(true);
     }
 
+    // TODO: borrar préstamos??
 
 }

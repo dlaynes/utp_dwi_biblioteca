@@ -4,7 +4,6 @@ import com.dwigs.biblioteca.model.EstadoPrestamo;
 import com.dwigs.biblioteca.model.InventarioLibro;
 import com.dwigs.biblioteca.repository.InventarioLibroRepository;
 import com.dwigs.biblioteca.repository.PrestamoRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +22,6 @@ public class InventarioLibroService {
         this.inventarioLibroRepository = inventarioLibroRepository;
     }
 
-    @Transactional
     public void agregarEntregado(Long inventarioLibroId){
         InventarioLibro inventarioLibro = inventarioLibroRepository.findOneById(inventarioLibroId).orElseThrow();
         Long prestados = prestamoRepository.countByInventarioLibroAndEstadoPrestamo(inventarioLibro, EstadoPrestamo.prestado);
@@ -33,7 +31,6 @@ public class InventarioLibroService {
         inventarioLibroRepository.save(inventarioLibro);
     }
 
-    @Transactional
     public void agregarPerdido(Long inventarioLibroId){
         InventarioLibro inventarioLibro = inventarioLibroRepository.findOneById(inventarioLibroId).orElseThrow();
         Long perdidos = prestamoRepository.countByInventarioLibroAndEstadoPrestamo(inventarioLibro, EstadoPrestamo.perdido);
@@ -44,7 +41,6 @@ public class InventarioLibroService {
         inventarioLibroRepository.save(inventarioLibro);
     }
 
-    @Transactional
     public void agregarPrestado(Long inventarioLibroId){
         InventarioLibro inventarioLibro = inventarioLibroRepository.findOneById(inventarioLibroId).orElseThrow();
         Long prestados = prestamoRepository.countByInventarioLibroAndEstadoPrestamo(inventarioLibro, EstadoPrestamo.prestado);

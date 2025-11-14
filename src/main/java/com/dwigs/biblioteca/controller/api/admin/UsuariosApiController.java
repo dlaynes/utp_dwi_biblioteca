@@ -1,6 +1,7 @@
 package com.dwigs.biblioteca.controller.api.admin;
 
 import com.dwigs.biblioteca.dto.request.ActualizarUsuarioDTO;
+import com.dwigs.biblioteca.dto.request.ExisteEmailDTO;
 import com.dwigs.biblioteca.model.EstadoUsuario;
 import com.dwigs.biblioteca.model.Usuario;
 import com.dwigs.biblioteca.repository.UsuarioRepository;
@@ -49,7 +50,22 @@ public class UsuariosApiController {
         return ResponseEntity.noContent().build(); //ResponseEntity.notFound().build();
     }
 
-    // TODO: endpoint para averiguar si el correo está siendo usado
+    // Por temas de seguridad, este endpoint debería estar protegido contra ataques de bots
+    // O auizás ser removido del flujo de interacciones del producto
+    @PostMapping("/existe")
+    public ResponseEntity<Boolean> existe(@RequestBody ExisteEmailDTO emailDTO) {
+        String email = emailDTO.getEmail();
+        Long id = emailDTO.getId();
+        boolean existe = false;
+        if(email != null){
+            if(id != null){
+                existe = usuarioRepository.existsByEmailAndId(email, id);
+            } else {
+                existe = usuarioRepository.existsByEmail(email);
+            }
+        }
+        return ResponseEntity.ok().body(existe);
+    }
 
     @PostMapping()
     public ResponseEntity<?> crear(@RequestBody ActualizarUsuarioDTO crearDTO){
@@ -67,6 +83,7 @@ public class UsuariosApiController {
         usuario.setRoles(crearDTO.getRoles());
         usuario.setEmailPersonal(crearDTO.getEmailPersonal());
         usuario.setEmail(email);
+        usuario.setNumeroDocumento(crearDTO.getNumeroDocumento());
         usuario.setTipoDocumento(crearDTO.getTipoDocumento());
         usuario.setGenero(crearDTO.getGenero());
         usuario.setEstadoCivil(crearDTO.getEstadoCivil());
@@ -98,6 +115,7 @@ public class UsuariosApiController {
         usuario.setEmailPersonal(editarDTO.getEmailPersonal());
         usuario.setEmail(email);
         usuario.setTipoDocumento(editarDTO.getTipoDocumento());
+        usuario.setNumeroDocumento(editarDTO.getNumeroDocumento());
         usuario.setGenero(editarDTO.getGenero());
         usuario.setEstadoCivil(editarDTO.getEstadoCivil());
         usuario.setEstadoUsuario(editarDTO.getEstadoUsuario());

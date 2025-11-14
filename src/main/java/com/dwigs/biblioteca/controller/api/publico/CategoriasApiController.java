@@ -47,24 +47,18 @@ public class CategoriasApiController {
 
     @PreAuthorize("hasAnyAuthority('ROLE_BIBLIOTECARIO', 'ROLE_ADMIN')")
     @PostMapping()
-    public ResponseEntity<Categoria> crear(@RequestBody ActualizarCategoriaDTO crearDTO){
+    public ResponseEntity<?> crear(@RequestBody ActualizarCategoriaDTO crearDTO){
 
-        // TODO: mejores mensajes de error
-        // Ya existe una categoría con esa etiqueta
         if(categoriaRepository.existsBySlug(crearDTO.getSlug())){
-            return ResponseEntity.unprocessableEntity().build();
+            return ResponseEntity.badRequest().body("Ya existe una categoría con esa etiqueta");
         }
 
         Categoria categoria = new Categoria();
 
-        // La categoría padre no existe
         Long categoriaPadreId = crearDTO.getCategoriaPadre_id();
         if(categoriaPadreId != null){
-            Optional<Categoria> categoriaPadre = categoriaRepository.findOneById(categoriaPadreId);
-            if(categoriaPadre.isEmpty()){
-                return ResponseEntity.unprocessableEntity().build();
-            }
-            categoria.setCategoriaPadre(categoriaPadre.get());
+            Categoria categoriaPadre = categoriaRepository.findOneById(categoriaPadreId).orElseThrow();
+            categoria.setCategoriaPadre(categoriaPadre);
         }
         categoria.setNombre(crearDTO.getNombre());
         categoria.setSlug(crearDTO.getSlug());
@@ -75,38 +69,26 @@ public class CategoriasApiController {
 
     @PreAuthorize("hasAnyAuthority('ROLE_BIBLIOTECARIO', 'ROLE_ADMIN')")
     @PutMapping(value="/{id}")
-    public ResponseEntity<Categoria> reemplazar(@PathVariable long id, @RequestBody ActualizarCategoriaDTO editarDTO){
+    public ResponseEntity<?> reemplazar(@PathVariable long id, @RequestBody ActualizarCategoriaDTO editarDTO){
 
-        Optional<Categoria> categoriaOptional = categoriaRepository.findOneById(id);
-        if(categoriaOptional.isEmpty()){
-            return ResponseEntity.unprocessableEntity().build();
-        }
-        Categoria categoria = categoriaOptional.get();
+        Categoria categoria = categoriaRepository.findOneById(id).orElseThrow();
 
-        // TODO: mejores mensajes de error
-        // Ya existe una categoría con esa etiqueta
         String slug = editarDTO.getSlug();
         if(!categoria.getSlug().equals(slug) && categoriaRepository.existsBySlug(slug)){
-            return ResponseEntity.unprocessableEntity().build();
+            return ResponseEntity.badRequest().body("Ya existe una categoría con esa etiqueta");
         }
-        // La categoría padre no existe
         Long categoriaPadreId = editarDTO.getCategoriaPadre_id();
         if(categoriaPadreId != null){
-            Optional<Categoria> categoriaPadre = categoriaRepository.findOneById(categoriaPadreId);
-            if(categoriaPadre.isEmpty()){
-                return ResponseEntity.unprocessableEntity().build();
-            }
+            Categoria categoriaPadre = categoriaRepository.findOneById(categoriaPadreId).orElseThrow();
             // Evitamos referencias cíclicas de primer nivel
             // TODO: evitar referencias ciclicas en todo el arbol
-            if(categoria.getId() == categoriaPadre.get().getCategoriaPadre().getId()){
-                return ResponseEntity.unprocessableEntity().build();
+            if(categoria.getId() == categoriaPadre.getCategoriaPadre().getId()){
+                return ResponseEntity.badRequest().body("La categoría padre seleccionada ya tiene a esta categoría como categoría padre");
             }
-            categoria.setCategoriaPadre(categoriaPadre.get());
+            categoria.setCategoriaPadre(categoriaPadre);
         }
         categoria.setNombre(editarDTO.getNombre());
         categoria.setSlug(editarDTO.getSlug());
-
-        // TODO: categorias
 
         return ResponseEntity.ok(categoriaRepository.save(categoria));
     }

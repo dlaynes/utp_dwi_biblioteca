@@ -32,4 +32,6 @@ public class PerfilApiController {
 
         return obj.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+    // Verificar si el email está siendo usado
 }
