@@ -51,7 +51,7 @@ public class AuthApiController {
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
         if(auth.isAuthenticated()){
-            // TODO: convertir en una sentencia UPDATE este bloque
+            // TODO: convertir este bloque en una sentencia UPDATE
             LocalDateTime now = LocalDateTime.now();
             Usuario usuario = usuarioRepository.findByEmail(request.getEmail()).orElseThrow();
             usuario.setUltimoLogin(now);
@@ -65,7 +65,7 @@ public class AuthApiController {
 
     @PostMapping(value="/register", produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> register(@RequestBody RegisterRequest request){
-        if(usuarioRepository.findByEmail(request.getEmail()) != null){
+        if(usuarioRepository.existsByEmail(request.getEmail())){
             return ResponseEntity.badRequest().body("Ya existe un usuario con el correo electrónico indicado");
         }
         Rol rol = rolRepository.findByNombre("CLIENTE").orElseThrow();
@@ -82,9 +82,11 @@ public class AuthApiController {
         u.setTelefono(request.getTelefono());
         u.setEmailPersonal(request.getEmail());
         u.setTipoDocumento(request.getTipoDocumento());
+        u.setNumeroDocumento(request.getNumeroDocumento());
         u.setGenero(request.getGenero());
         u.setEstadoCivil(request.getEstadoCivil());
         u.setEstadoUsuario(EstadoUsuario.normal);
+        u.setFechaRegistro(LocalDateTime.now());
 
         usuarioRepository.save(u);
 
