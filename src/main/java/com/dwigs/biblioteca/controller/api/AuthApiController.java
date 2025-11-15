@@ -22,8 +22,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 @RequestMapping("/api/auth")
@@ -51,6 +51,12 @@ public class AuthApiController {
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
         if(auth.isAuthenticated()){
+            // TODO: convertir en una sentencia UPDATE este bloque
+            LocalDateTime now = LocalDateTime.now();
+            Usuario usuario = usuarioRepository.findByEmail(request.getEmail()).orElseThrow();
+            usuario.setUltimoLogin(now);
+            usuarioRepository.save(usuario);
+
             return ResponseEntity.ok(new TokenResponse(jwtTokenService.generateToken(request.getEmail()), auth.getAuthorities()));
         } else {
             throw new UsernameNotFoundException("Usuario no encontrado o contraseña inválida");
@@ -62,16 +68,13 @@ public class AuthApiController {
         if(usuarioRepository.findByEmail(request.getEmail()) != null){
             return ResponseEntity.badRequest().body("Ya existe un usuario con el correo electrónico indicado");
         }
-        Optional<Rol> rolOptional = rolRepository.findByNombre("Cliente");
-        if(!rolOptional.isPresent()){
-            return ResponseEntity.internalServerError().body("No se encontró el rol Cliente");
-        }
+        Rol rol = rolRepository.findByNombre("CLIENTE").orElseThrow();
 
         Usuario u = new Usuario();
         u.setEmail(request.getEmail());
         u.setPassword(passwordEncoder.encode(request.getPassword()));
         Set<Rol> roles = new HashSet<>();
-        roles.add(rolOptional.get());
+        roles.add(rol);
         u.setRoles(roles);
 
         u.setNombres(request.getNombres());
