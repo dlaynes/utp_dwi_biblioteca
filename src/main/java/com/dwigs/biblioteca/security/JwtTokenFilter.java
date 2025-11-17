@@ -14,11 +14,28 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @Component
 public class JwtTokenFilter extends OncePerRequestFilter {
     private final UserDetailsService userDetailsService;
     private final JwtTokenService jwtService;
+
+    private final List<String> excludedUrls = Arrays.asList("/api/auth/**", "/api/publico/**");
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String requestUri = request.getRequestURI();
+        for (String excludedUrl : excludedUrls) {
+            // Simple check for startsWith, consider more robust pattern matching for complex needs
+            if (requestUri.startsWith(excludedUrl.replace("**", ""))) {
+                return true; // Skip filtering for this URL
+            }
+        }
+        return false; // Apply filter for other URLs
+    }
+
 
     @Autowired
     public JwtTokenFilter(UserDetailsService userDetailsService, JwtTokenService jwtService) {
