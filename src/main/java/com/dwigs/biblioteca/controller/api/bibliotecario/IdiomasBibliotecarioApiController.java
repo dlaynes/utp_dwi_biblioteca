@@ -15,12 +15,12 @@ import java.util.Optional;
 
 @RestController()
 @RequestMapping("/api/bibliotecario/idiomas")
-public class IdiomasApiController {
+public class IdiomasBibliotecarioApiController {
 
     private IdiomaRepository idiomaRepository;
 
     @Autowired
-    public IdiomasApiController(
+    public IdiomasBibliotecarioApiController(
             IdiomaRepository idiomaRepository
     ){
         this.idiomaRepository = idiomaRepository;
