@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public class TokenResponse {
     private String token;
     private String tokenType = "Bearer";
-    private String[] roles;
+    private String[] rolKeys;
 
     public TokenResponse(String token, Collection<? extends GrantedAuthority> authorities) {
         this.token = token;
@@ -21,6 +21,6 @@ public class TokenResponse {
         List<String> authorityStrings = authorities.stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
-        this.roles = authorityStrings.toArray(new String[0]);
+        this.rolKeys = authorityStrings.toArray(new String[0]);
     }
 }

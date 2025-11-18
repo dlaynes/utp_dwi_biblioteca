@@ -44,5 +44,5 @@ public class ActualizarUsuarioDTO {
     @Convert(converter = EstadoUsuarioAttributeConverter.class)
     private EstadoUsuario estadoUsuario;
 
-    private Set<Rol> roles = new HashSet<>();
+    private Set<String> rolKeys = new HashSet<>();
 }

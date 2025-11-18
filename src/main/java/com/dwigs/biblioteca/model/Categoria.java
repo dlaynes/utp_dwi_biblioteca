@@ -51,6 +51,10 @@ public class Categoria {
     @OneToMany(mappedBy = "categoriaPadre")
     private Set<Categoria> subCategorias = new HashSet<>();
 
+    @JsonIgnore
+    @ManyToMany(mappedBy = "categorias")
+    private Set<Libro> libros = new HashSet<>();
+
     public Categoria(String slug, String nombre, LocalDateTime fechaRegistro, String color, String icono){
         this.slug = slug;
         this.nombre = nombre;
