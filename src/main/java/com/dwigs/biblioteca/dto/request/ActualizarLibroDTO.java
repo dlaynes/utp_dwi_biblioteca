@@ -45,7 +45,7 @@ public class ActualizarLibroDTO {
     @Convert(converter = GeneroLiterarioAttributeConverter.class)
     private GeneroLiterario generoLiterario;
 
-    private Set<Categoria> categorias = new HashSet<>();
+    private Set<Long> categoriaIds = new HashSet<>();
 
     public Libro obtenerLibro(){
         Libro libro = new Libro();
@@ -56,7 +56,6 @@ public class ActualizarLibroDTO {
         libro.setPublicadoEn(this.getPublicadoEn());
         libro.setPaginas(this.getPaginas());
         libro.setGeneroLiterario(this.getGeneroLiterario());
-        libro.setCategorias(this.getCategorias());
         return libro;
     }
 }

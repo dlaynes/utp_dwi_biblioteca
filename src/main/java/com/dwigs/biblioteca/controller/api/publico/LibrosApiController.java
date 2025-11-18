@@ -1,5 +1,6 @@
 package com.dwigs.biblioteca.controller.api.publico;
 
+import com.dwigs.biblioteca.dto.response.LibroResponseDTO;
 import com.dwigs.biblioteca.model.Libro;
 import com.dwigs.biblioteca.repository.LibroRepository;
 import com.dwigs.biblioteca.service.AutorService;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController()
 @RequestMapping("/api/publico/libros")
@@ -40,21 +41,27 @@ public class LibrosApiController {
         this.idiomaService = idiomaService;
     }
 
-    @GetMapping()
-    public List<Libro> listar(){
-        return libroRepository.findAll();
+    private List<LibroResponseDTO> convertirADTO(List<Libro> libros){
+        return libros.stream().map(libro -> LibroResponseDTO.convertirDesdeLibro(libro)).collect(Collectors.toList());
     }
 
-    @GetMapping("/categoria/{id}")
-    public List<Libro> porCategoria(@PathVariable String slug){
-        return libroRepository.findByCategoria_Slug(slug);
+    @GetMapping()
+    public List<LibroResponseDTO> listar(){
+        return convertirADTO( libroRepository.findAll());
+    }
+
+    @GetMapping("/categoria/{slug}")
+    public List<LibroResponseDTO> porCategoria(@PathVariable String slug){
+        return convertirADTO(libroRepository.findByCategoria_Slug(slug));
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Libro> consultar(@PathVariable long id){
+    public ResponseEntity<LibroResponseDTO> consultar(@PathVariable long id){
 
-        Optional<Libro> libro = libroRepository.findOneById(id);
-        return libro.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        Libro libro = libroRepository.findOneById(id).orElseThrow();
+        LibroResponseDTO libroResponseDTO = LibroResponseDTO.convertirDesdeLibro(libro);
+
+        return ResponseEntity.ok(libroResponseDTO);
     }
 
 

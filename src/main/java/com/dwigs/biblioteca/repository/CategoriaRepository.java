@@ -6,12 +6,15 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface CategoriaRepository extends JpaRepository<Categoria, Long> {
     Optional<Categoria> findOneById(Long categoriaId);
 
     List<Categoria> findAll();
+
+    Set<Categoria> findByIdIn(Set<Long> categoriaIds);
 
     boolean existsBySlug(String categoriaSlug);
 

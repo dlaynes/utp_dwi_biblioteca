@@ -1,5 +1,6 @@
 package com.dwigs.biblioteca.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,10 +42,12 @@ public class Categoria {
     @Column(name="icono")
     private String icono;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "categoria_padre_id")
     private Categoria categoriaPadre;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "categoriaPadre")
     private Set<Categoria> subCategorias = new HashSet<>();
 
