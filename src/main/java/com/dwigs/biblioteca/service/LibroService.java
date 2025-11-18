@@ -1,7 +1,9 @@
 package com.dwigs.biblioteca.service;
 
+import com.dwigs.biblioteca.model.EstadoPrestamo;
 import com.dwigs.biblioteca.model.Libro;
 import com.dwigs.biblioteca.repository.LibroRepository;
+import com.dwigs.biblioteca.repository.PrestamoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,11 +13,14 @@ import java.util.Optional;
 @Service
 public class LibroService {
 
+    private final PrestamoRepository prestamoRepository;
+
     private final LibroRepository repository;
 
     @Autowired
-    public LibroService(LibroRepository repository){
+    public LibroService(LibroRepository repository, PrestamoRepository prestamoRepository){
         this.repository = repository;
+        this.prestamoRepository = prestamoRepository;
     }
 
     public List<Libro> listar(){
@@ -34,5 +39,34 @@ public class LibroService {
         repository.deleteById(id);
         return true;
     }
+
+    public void agregarEntregado(Long inventarioLibroId){
+        Libro libro = repository.findOneById(inventarioLibroId).orElseThrow();
+        Long prestados = prestamoRepository.countByLibroAndEstadoPrestamo(libro, EstadoPrestamo.prestado);
+
+        libro.setDisponibles(libro.getDisponibles() + 1);
+        libro.setPrestados(prestados);
+        repository.save(libro);
+    }
+
+    public void agregarPerdido(Long inventarioLibroId){
+        Libro libro = repository.findOneById(inventarioLibroId).orElseThrow();
+        Long perdidos = prestamoRepository.countByLibroAndEstadoPrestamo(libro, EstadoPrestamo.perdido);
+        Long prestados = prestamoRepository.countByLibroAndEstadoPrestamo(libro, EstadoPrestamo.prestado);
+
+        libro.setPerdidos(perdidos);
+        libro.setPrestados(prestados);
+        repository.save(libro);
+    }
+
+    public void agregarPrestado(Long inventarioLibroId){
+        Libro libro = repository.findOneById(inventarioLibroId).orElseThrow();
+        Long prestados = prestamoRepository.countByLibroAndEstadoPrestamo(libro, EstadoPrestamo.prestado);
+
+        libro.setDisponibles(libro.getDisponibles() -1);
+        libro.setPrestados(prestados);
+        repository.save(libro);
+    }
+
 
 }

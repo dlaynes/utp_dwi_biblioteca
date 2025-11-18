@@ -62,6 +62,22 @@ public class Libro  {
     @Convert(converter = GeneroLiterarioAttributeConverter.class)
     private GeneroLiterario generoLiterario;
 
+    @Column(name="disponibles")
+    private Long disponibles;
+
+    @Column(name="reservados")
+    private Long reservados;
+
+    @Column(name="prestados")
+    private Long prestados;
+
+    @Column(name="perdidos")
+    private Long perdidos;
+
+    private long existentes(){
+        return disponibles + prestados;
+    }
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "categoria_libro",
             joinColumns = @JoinColumn(name = "libro_id", referencedColumnName = "id"),

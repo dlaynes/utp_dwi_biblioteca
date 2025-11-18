@@ -65,6 +65,7 @@ public class LibrosBibliotecarioApiController {
         libro.setAutor(autorService.consultar(crearLibroDTO.getAutorId()).orElseThrow());
         libro.setIdioma(idiomaService.consultar(crearLibroDTO.getIdiomaId()).orElseThrow());
         libro.setEditorial(editorialService.consultar(crearLibroDTO.getEditorialId()).orElseThrow());
+        libro.setDisponibles(crearLibroDTO.getDisponibles());
 
         Libro libroCreado = libroRepository.save(libro);
         return ResponseEntity.created(URI.create("/api/admin/libros/"+ libro.getId())).body(libroCreado);

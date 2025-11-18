@@ -15,6 +15,6 @@ public class SolicitarPrestamoDTO {
     @Convert(converter = LugarPrestamoAtributeConverter.class)
     private LugarPrestamo lugarPrestamo;
 
-    private Long inventarioLibroId;
+    private Long libroId;
 
 }

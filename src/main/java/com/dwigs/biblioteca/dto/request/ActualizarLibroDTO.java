@@ -32,6 +32,14 @@ public class ActualizarLibroDTO {
 
     private int paginas;
 
+    private Long disponibles;
+
+    private Long reservados;
+
+    private Long prestados;
+
+    private Long perdidos;
+
     private LocalDateTime publicadoEn;
 
     @Convert(converter = GeneroLiterarioAttributeConverter.class)

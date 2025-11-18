@@ -4,13 +4,12 @@ import com.dwigs.biblioteca.dto.request.prestamo.AceptarPrestamoDTO;
 import com.dwigs.biblioteca.dto.request.prestamo.RecibirPrestamoDTO;
 import com.dwigs.biblioteca.dto.request.prestamo.SolicitarPrestamoDTO;
 import com.dwigs.biblioteca.model.EstadoPrestamo;
-import com.dwigs.biblioteca.model.InventarioLibro;
+import com.dwigs.biblioteca.model.Libro;
 import com.dwigs.biblioteca.model.Prestamo;
 import com.dwigs.biblioteca.model.Usuario;
-import com.dwigs.biblioteca.repository.InventarioLibroRepository;
 import com.dwigs.biblioteca.repository.UsuarioRepository;
 import com.dwigs.biblioteca.security.JwtUserDetails;
-import com.dwigs.biblioteca.service.InventarioLibroService;
+import com.dwigs.biblioteca.service.LibroService;
 import com.dwigs.biblioteca.service.PrestamoService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,19 +32,17 @@ public class PrestamosApiController {
     // TODO: reemplazar llamadas mediante el servicio
     private UsuarioRepository usuarioRepository;
 
-    private InventarioLibroRepository inventarioLibroRepository;
-
-    private InventarioLibroService inventarioLibroService;
+    private LibroService libroService;
 
     @Autowired
     public PrestamosApiController(
             PrestamoService prestamoService,
             UsuarioRepository usuarioRepository,
-            InventarioLibroService inventarioLibroService
+            LibroService libroService
     ){
         this.usuarioRepository = usuarioRepository;
         this.prestamoService = prestamoService;
-        this.inventarioLibroService = inventarioLibroService;
+        this.libroService = libroService;
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_BIBLIOTECARIO', 'ROLE_ADMIN')")
@@ -112,7 +109,7 @@ public class PrestamosApiController {
         prestamo.setFechaRegistro(LocalDateTime.now());
         prestamo.setLugarPrestamo(crearDTO.getLugarPrestamo());
         prestamo.setCliente(cliente);
-        prestamo.setInventarioLibro(inventarioLibroRepository.findOneById(crearDTO.getInventarioLibroId()).orElseThrow());
+        prestamo.setLibro(libroService.consultar(crearDTO.getLibroId()).orElseThrow());
         prestamoService.crear(prestamo);
         // TODO: crear un DTO para la respuesta
         return ResponseEntity.created(URI.create("/api/cliente/prestamos/"+ prestamo.getId())).body(prestamo);
@@ -125,8 +122,8 @@ public class PrestamosApiController {
         String email = userDetails.getUsername();
         Usuario bibliotecario = usuarioRepository.findByEmail(email).orElseThrow();
         Prestamo prestamo = prestamoService.encontrarPorEstado( id, EstadoPrestamo.reservado).orElseThrow();
-        InventarioLibro inventarioLibro = prestamo.getInventarioLibro();
-        if(inventarioLibro.getDisponibles() < 1){
+        Libro libro = prestamo.getLibro();
+        if(libro.getDisponibles() < 1){
             return ResponseEntity.badRequest().body("Actualmente no hay libros disponibles en el inventario");
         }
 
@@ -139,7 +136,7 @@ public class PrestamosApiController {
         prestamo.setEstadoPrestamo(EstadoPrestamo.prestado);
         prestamoService.actualizar(id, prestamo);
 
-        inventarioLibroService.agregarPrestado(inventarioLibro.getId());
+        libroService.agregarPrestado(libro.getId());
         return ResponseEntity.ok().body(prestamo);
     }
 
@@ -160,7 +157,7 @@ public class PrestamosApiController {
         prestamo.setAdvertencia(recibirPrestamoDTO.isAdvertencia());
         prestamoService.actualizar(id, prestamo);
 
-        inventarioLibroService.agregarEntregado(prestamo.getInventarioLibro().getId());
+        libroService.agregarEntregado(prestamo.getLibro().getId());
         return ResponseEntity.ok().body(prestamo);
     }
 
@@ -172,7 +169,7 @@ public class PrestamosApiController {
 
         prestamo.setEstadoPrestamo(EstadoPrestamo.perdido);
         prestamoService.actualizar(id, prestamo);
-        inventarioLibroService.agregarPerdido(prestamo.getInventarioLibro().getId());
+        libroService.agregarPerdido(prestamo.getLibro().getId());
         return ResponseEntity.ok().body(true);
     }
 

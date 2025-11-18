@@ -36,8 +36,8 @@ public class Prestamo {
     private LocalDateTime fechaRegistro;
 
     @ManyToOne()
-    @JoinColumn(name="inventario_id", nullable = false)
-    private InventarioLibro inventarioLibro;
+    @JoinColumn(name="libro_id", nullable = false)
+    private Libro libro;
 
     // Persona que solicita el libro
     @ManyToOne()

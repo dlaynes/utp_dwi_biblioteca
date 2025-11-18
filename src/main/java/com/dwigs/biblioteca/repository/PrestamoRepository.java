@@ -1,7 +1,7 @@
 package com.dwigs.biblioteca.repository;
 
 import com.dwigs.biblioteca.model.EstadoPrestamo;
-import com.dwigs.biblioteca.model.InventarioLibro;
+import com.dwigs.biblioteca.model.Libro;
 import com.dwigs.biblioteca.model.Prestamo;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -23,6 +23,6 @@ public interface PrestamoRepository extends JpaRepository<Prestamo, Long> {
 
     Long countByClienteId(Long clienteId);
 
-    Long countByInventarioLibroAndEstadoPrestamo(InventarioLibro inventarioLibro, EstadoPrestamo estadoPrestamo);
+    Long countByLibroAndEstadoPrestamo(Libro libro, EstadoPrestamo estadoPrestamo);
 
 }

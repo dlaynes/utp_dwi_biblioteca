@@ -6,7 +6,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,7 +15,7 @@ import java.util.List;
  * Inicializa los datos de un local, sus libros y un inventario por defecto
  * */
 @Configuration
-public class LocalInitializer {
+public class LibroInitializer {
 
     public static List<Idioma> idiomas = Arrays.asList(
             new Idioma(LocalDateTime.now(), "Español", "ES"),
@@ -35,17 +34,13 @@ public class LocalInitializer {
             IdiomaRepository idiomaRepository,
             EditorialRepository editorialRepository,
             AutorRepository autorRepository,
-            LocalRepository localRepository,
-            LibroRepository libroRepository,
-            InventarioLibroRepository inventarioLibroRepository
+            LibroRepository libroRepository
     ) {
         return args -> {
             crearIdiomas(idiomaRepository);
             Editorial editorial = crearEditoriales(editorialRepository);
             Autor autor = crearAutores(autorRepository);
             List<Libro> libros = crearLibros(libroRepository, editorial, idiomas.get(0), autor);
-            Local local = crearLocal(localRepository);
-            crearInventario(inventarioLibroRepository, local, libros);
         };
     }
 
@@ -102,6 +97,10 @@ public class LocalInitializer {
             libro.setEditorial(editorial);
             libro.setAutor(autor);
             libro.setPaginas(500);
+            libro.setDisponibles(2L);
+            libro.setPerdidos(0L);
+            libro.setReservados(0L);
+            libro.setPerdidos(0L);
             libro.setGeneroLiterario(GeneroLiterario.narrativo);
             libro.setPublicadoEn(LocalDateTime.of(1922,1,1,0,0,0));
             libros.add( libroRepository.save(libro));
@@ -110,40 +109,6 @@ public class LocalInitializer {
             libros.add(libro);
         }
         return libros;
-    }
-
-    private Local crearLocal(LocalRepository localRepository){
-        Local local;
-        if(localRepository.count() < 1){
-            local = new Local();
-            local.setCiudad("Lima");
-            local.setEmail("sucursal@biblioteca.com");
-            local.setNombre("Sucursal principal");
-            local.setPais("Perú");
-            local.setTelefono("4534534535");
-            local.setUbicacion("Av. Arequipa S/N");
-            local.setLatitud(BigDecimal.valueOf(-12.074685));
-            local.setLongitud(BigDecimal.valueOf(-77.035979));
-            local = localRepository.save(local);
-        } else {
-            local = localRepository.findOneById(1L).orElseThrow();
-        }
-        return local;
-    }
-
-    private void crearInventario(InventarioLibroRepository inventarioLibroRepository, Local local, List<Libro> libros){
-        if(inventarioLibroRepository.count() < 1){
-            for(Libro libro : libros){
-                InventarioLibro inventarioLibro = new InventarioLibro();
-                inventarioLibro.setLocal(local);
-                inventarioLibro.setLibro(libro);
-                inventarioLibro.setDisponibles(2);
-                inventarioLibro.setPerdidos(0);
-                inventarioLibro.setReservados(0);
-                inventarioLibro.setPerdidos(0);
-                inventarioLibroRepository.save(inventarioLibro);
-            }
-        }
     }
 
 }
