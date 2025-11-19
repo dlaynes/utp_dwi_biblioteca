@@ -15,7 +15,7 @@ public interface LibroRepository extends JpaRepository<Libro, Long> {
 
     @NativeQuery("SELECT l.* FROM libro l" +
             " LEFT JOIN categoria_libro AS cl ON cl.libro_id=l.id" +
-            " LEFT JOIN categorias c" +
+            " LEFT JOIN categoria c ON c.id=cl.categoria_id " +
             " WHERE c.slug=:categoriaSlug")
-    List<Libro> findByCategoria_Slug(String categoriaSlug);
+    List<Libro> findByCategoriaSlug(String categoriaSlug);
 }

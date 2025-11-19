@@ -54,7 +54,7 @@ public class LibrosBibliotecarioApiController {
 
     @GetMapping("/categoria/{id}")
     public List<Libro> porCategoria(@PathVariable String slug){
-        return libroRepository.findByCategoria_Slug(slug);
+        return libroRepository.findByCategoriaSlug(slug);
     }
 
     @GetMapping(value = "/{id}")

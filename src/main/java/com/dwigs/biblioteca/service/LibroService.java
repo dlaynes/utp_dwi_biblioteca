@@ -40,6 +40,14 @@ public class LibroService {
         return true;
     }
 
+    // O usar joins
+    public void agregarReserva(Long inventarioLibroId){
+        Libro libro = repository.findOneById(inventarioLibroId).orElseThrow();
+        Long reservados = prestamoRepository.countByLibroAndEstadoPrestamo(libro, EstadoPrestamo.reservado);
+        libro.setReservados(reservados);
+        repository.save(libro);
+    }
+
     public void agregarEntregado(Long inventarioLibroId){
         Libro libro = repository.findOneById(inventarioLibroId).orElseThrow();
         Long prestados = prestamoRepository.countByLibroAndEstadoPrestamo(libro, EstadoPrestamo.prestado);

@@ -52,7 +52,7 @@ public class LibrosApiController {
 
     @GetMapping("/categoria/{slug}")
     public List<LibroResponseDTO> porCategoria(@PathVariable String slug){
-        return convertirADTO(libroRepository.findByCategoria_Slug(slug));
+        return convertirADTO(libroRepository.findByCategoriaSlug(slug));
     }
 
     @GetMapping(value = "/{id}")

@@ -9,10 +9,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Getter
 @Setter
-public class LibroResponseDTO {
-
+@Getter
+public class LibroPublicoResponseDTO {
     private Long id;
 
     private String titulo;
@@ -35,24 +34,18 @@ public class LibroResponseDTO {
 
     private Long reservados;
 
-    private Long prestados;
-
-    private Long perdidos;
-
     private LocalDateTime publicadoEn;
 
     private GeneroLiterario generoLiterario;
 
     private Set<Long> categoriaIds = new HashSet<>();
 
-    public static LibroResponseDTO convertirDesdeLibro(Libro libro) {
-        LibroResponseDTO libroResponse = new LibroResponseDTO();
+    public static LibroPublicoResponseDTO convertirDesdeLibro(Libro libro) {
+        LibroPublicoResponseDTO libroResponse = new LibroPublicoResponseDTO();
 
         libroResponse.setId(libro.getId());
         libroResponse.setTitulo(libro.getTitulo());
         libroResponse.setDisponibles(libro.getDisponibles());
-        libroResponse.setPerdidos(libro.getPerdidos());
-        libroResponse.setPrestados(libro.getPrestados());
         libroResponse.setReservados(libro.getReservados());
         libroResponse.setAutor(libro.getAutor());
         libroResponse.setGeneroLiterario(libro.getGeneroLiterario());

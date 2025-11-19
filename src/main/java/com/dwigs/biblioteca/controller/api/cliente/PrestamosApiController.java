@@ -3,6 +3,8 @@ package com.dwigs.biblioteca.controller.api.cliente;
 import com.dwigs.biblioteca.dto.request.prestamo.AceptarPrestamoDTO;
 import com.dwigs.biblioteca.dto.request.prestamo.RecibirPrestamoDTO;
 import com.dwigs.biblioteca.dto.request.prestamo.SolicitarPrestamoDTO;
+import com.dwigs.biblioteca.dto.response.LibroPublicoResponseDTO;
+import com.dwigs.biblioteca.dto.response.ReservaResponseDTO;
 import com.dwigs.biblioteca.model.EstadoPrestamo;
 import com.dwigs.biblioteca.model.Libro;
 import com.dwigs.biblioteca.model.Prestamo;
@@ -22,6 +24,7 @@ import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController()
 @RequestMapping("/api/cliente/prestamos")
@@ -53,18 +56,19 @@ public class PrestamosApiController {
 
     @PreAuthorize("hasAnyAuthority('ROLE_CLIENTE', 'ROLE_BIBLIOTECARIO', 'ROLE_ADMIN')")
     @GetMapping("/mis-solicitudes")
-    public List<Prestamo> listarMisPrestamos(@AuthenticationPrincipal JwtUserDetails userDetails){
+    public List<ReservaResponseDTO> listarMisPrestamos(@AuthenticationPrincipal JwtUserDetails userDetails){
         String email = userDetails.getUsername();
         Usuario usuario = usuarioRepository.findByEmail(email).orElseThrow();
-        return prestamoService.listarDeCliente(usuario.getId());
+        return prestamoService.listarDeCliente(usuario.getId()).stream().map(it -> convertirPrestamo(it)).collect(Collectors.toList());
     }
 
     @GetMapping(value = "/mis-solicitudes/{id}")
-    public ResponseEntity<Prestamo> consultarMiPrestamo(@AuthenticationPrincipal JwtUserDetails userDetails, @PathVariable long id){
+    public ResponseEntity<ReservaResponseDTO> consultarMiPrestamo(@AuthenticationPrincipal JwtUserDetails userDetails, @PathVariable long id){
         String email = userDetails.getUsername();
         Usuario usuario = usuarioRepository.findByEmail(email).orElseThrow();
-        Optional<Prestamo> obj = prestamoService.damePrestamoDeUsuario(id, usuario.getId());
-        return obj.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        Prestamo obj = prestamoService.damePrestamoDeUsuario(id, usuario.getId()).orElseThrow();
+
+        return ResponseEntity.ok(convertirPrestamo(obj));
     }
 
     @GetMapping(value = "/mis-solicitudes/cancelar/{id}")
@@ -96,12 +100,24 @@ public class PrestamosApiController {
         return obj.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    private ReservaResponseDTO convertirPrestamo(Prestamo prestamo){
+        ReservaResponseDTO reservaResponseDTO = new ReservaResponseDTO();
+        reservaResponseDTO.setId(prestamo.getId());
+        reservaResponseDTO.setFechaReserva(prestamo.getFechaReserva());
+        reservaResponseDTO.setLibro(LibroPublicoResponseDTO.convertirDesdeLibro( prestamo.getLibro()));
+        reservaResponseDTO.setEstadoPrestamo(prestamo.getEstadoPrestamo());
+        return reservaResponseDTO;
+    }
+
     // Cualquier rol puede reservar un libro
     @PreAuthorize("hasAnyAuthority('ROLE_CLIENTE', 'ROLE_BIBLIOTECARIO', 'ROLE_ADMIN')")
     @PostMapping(value = "/reservar")
-    public ResponseEntity<Prestamo> reservarLibro(@RequestBody SolicitarPrestamoDTO crearDTO, @AuthenticationPrincipal JwtUserDetails userDetails){
+    public ResponseEntity<ReservaResponseDTO> reservarLibro(@RequestBody SolicitarPrestamoDTO crearDTO, @AuthenticationPrincipal JwtUserDetails userDetails){
         String email = userDetails.getUsername();
         Usuario cliente = usuarioRepository.findByEmail(email).orElseThrow();
+        Libro libro = libroService.consultar(crearDTO.getLibroId()).orElseThrow();
+
+        // TODO: evitar que solicite el mismo libro el usuario actual
 
         Prestamo prestamo = new Prestamo();
         prestamo.setEstadoPrestamo(EstadoPrestamo.reservado);
@@ -109,10 +125,10 @@ public class PrestamosApiController {
         prestamo.setFechaRegistro(LocalDateTime.now());
         prestamo.setLugarPrestamo(crearDTO.getLugarPrestamo());
         prestamo.setCliente(cliente);
-        prestamo.setLibro(libroService.consultar(crearDTO.getLibroId()).orElseThrow());
+        prestamo.setLibro(libro);
         prestamoService.crear(prestamo);
-        // TODO: crear un DTO para la respuesta
-        return ResponseEntity.created(URI.create("/api/cliente/prestamos/"+ prestamo.getId())).body(prestamo);
+
+        return ResponseEntity.created(URI.create("/api/cliente/prestamos/"+ prestamo.getId())).body(convertirPrestamo(prestamo));
     }
 
     @Transactional
@@ -128,7 +144,7 @@ public class PrestamosApiController {
         }
 
         LocalDateTime hoy = LocalDateTime.now();
-
+        prestamo.setLugarPrestamo(aceptarPrestamoDTO.getLugarPrestamo());
         prestamo.setEntregadoPor(bibliotecario);
         prestamo.setFechaPrestamo(hoy);
         prestamo.setObservacionesEntrega(aceptarPrestamoDTO.getObservacionesEntrega());
