@@ -71,7 +71,7 @@ public class PrestamosApiController {
         return ResponseEntity.ok(convertirPrestamo(obj));
     }
 
-    @GetMapping(value = "/mis-solicitudes/cancelar/{id}")
+    @PutMapping(value = "/mis-solicitudes/cancelar/{id}")
     public ResponseEntity<Boolean> cancelarMiReserva(@AuthenticationPrincipal JwtUserDetails userDetails, @PathVariable long id){
         String email = userDetails.getUsername();
         Usuario usuario = usuarioRepository.findByEmail(email).orElseThrow();
@@ -83,7 +83,7 @@ public class PrestamosApiController {
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_BIBLIOTECARIO', 'ROLE_ADMIN')")
-    @GetMapping(value = "/cancelar/{id}")
+    @PutMapping(value = "/cancelar/{id}")
     public ResponseEntity<Boolean> cancelarReserva(@PathVariable long id){
         Prestamo prestamo = prestamoService.encontrarPorEstado(id, EstadoPrestamo.reservado).orElseThrow();
 
@@ -106,11 +106,11 @@ public class PrestamosApiController {
         reservaResponseDTO.setFechaReserva(prestamo.getFechaReserva());
         reservaResponseDTO.setLibro(LibroPublicoResponseDTO.convertirDesdeLibro( prestamo.getLibro()));
         reservaResponseDTO.setEstadoPrestamo(prestamo.getEstadoPrestamo());
+        reservaResponseDTO.setLugarPrestamo(prestamo.getLugarPrestamo());
         return reservaResponseDTO;
     }
 
     // Cualquier rol puede reservar un libro
-    @PreAuthorize("hasAnyAuthority('ROLE_CLIENTE', 'ROLE_BIBLIOTECARIO', 'ROLE_ADMIN')")
     @PostMapping(value = "/reservar")
     public ResponseEntity<ReservaResponseDTO> reservarLibro(@RequestBody SolicitarPrestamoDTO crearDTO, @AuthenticationPrincipal JwtUserDetails userDetails){
         String email = userDetails.getUsername();
