@@ -148,7 +148,12 @@ public class PrestamosApiController {
         prestamo.setEntregadoPor(bibliotecario);
         prestamo.setFechaPrestamo(hoy);
         prestamo.setObservacionesEntrega(aceptarPrestamoDTO.getObservacionesEntrega());
-        prestamo.setFechaEsperadaRetorno(aceptarPrestamoDTO.getFechaEsperadaDeRetorno()); // TODO: definir los dias por defecto en otro lugar
+
+        LocalDateTime fechaEsperadaRetorno = aceptarPrestamoDTO.getFechaEsperadaDeRetorno();
+        if(fechaEsperadaRetorno == null){
+            fechaEsperadaRetorno = hoy.plusDays(30);
+        }
+        prestamo.setFechaEsperadaRetorno(fechaEsperadaRetorno); // TODO: definir los dias por defecto en otro lugar
         prestamo.setEstadoPrestamo(EstadoPrestamo.prestado);
         prestamoService.actualizar(id, prestamo);
 

@@ -11,9 +11,9 @@ public enum EstadoPrestamo {
         return switch (this) {
             case reservado -> "R";
             case cancelado -> "C";
-            case prestado -> "P";
+            case prestado -> "A";
             case entregado -> "E";
-            case perdido -> "D";
+            case perdido -> "P";
             default -> "";
         };
     };
