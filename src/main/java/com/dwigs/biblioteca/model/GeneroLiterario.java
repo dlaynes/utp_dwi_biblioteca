@@ -5,7 +5,7 @@ public enum GeneroLiterario {
     narrativo,
     poesia,
     dramatico,
-    didactivo,
+    didactico,
     lirico;
 
     public String toString(){
@@ -13,7 +13,7 @@ public enum GeneroLiterario {
             case narrativo -> "N";
             case poesia -> "P";
             case dramatico -> "D";
-            case didactivo -> "I";
+            case didactico -> "I";
             case lirico -> "L";
             default -> null;
         };
@@ -24,7 +24,7 @@ public enum GeneroLiterario {
             case narrativo -> "Narrativo";
             case poesia -> "Poesía";
             case dramatico -> "Dramático";
-            case didactivo -> "Didáctico";
+            case didactico -> "Didáctico";
             case lirico -> "Lírico";
             default -> "n/d";
         };

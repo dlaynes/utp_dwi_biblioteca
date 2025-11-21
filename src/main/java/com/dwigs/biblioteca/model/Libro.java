@@ -27,13 +27,14 @@ public class Libro  {
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime fechaRegistro;
 
-    @Column(name="nombre", nullable = false)
+    @Column(name="titulo", nullable = false)
     private String titulo;
 
     @ManyToOne()
     @JoinColumn(name="autor_id", nullable = false)
     private Autor autor;
 
+    // Debería ser ISBN
     @Column(name="ibsm", nullable = false)
     private String ibsm;
 

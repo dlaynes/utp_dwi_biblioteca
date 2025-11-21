@@ -16,7 +16,7 @@ public class GeneroLiterarioAttributeConverter implements AttributeConverter<Gen
         return switch(s) {
             case "N" -> GeneroLiterario.narrativo;
             case "D" -> GeneroLiterario.dramatico;
-            case "I" -> GeneroLiterario.didactivo;
+            case "I" -> GeneroLiterario.didactico;
             case "P" -> GeneroLiterario.poesia;
             case "L" -> GeneroLiterario.lirico;
             default -> null;

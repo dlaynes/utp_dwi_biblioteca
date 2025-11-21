@@ -7,13 +7,16 @@ import com.dwigs.biblioteca.service.AutorService;
 import com.dwigs.biblioteca.service.EditorialService;
 import com.dwigs.biblioteca.service.IdiomaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController()
@@ -48,6 +51,28 @@ public class LibrosApiController {
     @GetMapping()
     public List<LibroResponseDTO> listar(){
         return convertirADTO( libroRepository.findAll());
+    }
+
+    @GetMapping("/busqueda")
+    public ResponseEntity<Map<String, Object>> buscar(
+        @RequestParam(required = false) String titulo,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size
+    ){
+        Pageable paging = PageRequest.of(page, size);
+        Page<Libro> resultadosPaginados;
+        if (titulo == null)
+            resultadosPaginados = libroRepository.findAll(paging);
+        else
+            resultadosPaginados = libroRepository.findByTituloContaining(titulo, paging);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("results", resultadosPaginados.getContent());
+        response.put("currentPage", resultadosPaginados.getNumber());
+        response.put("totalItems", resultadosPaginados.getTotalElements());
+        response.put("totalPages", resultadosPaginados.getTotalPages());
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/categoria/{slug}")
